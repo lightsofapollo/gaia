@@ -503,7 +503,7 @@ var SyntheticGestures = (function() {
     swipe: swipe,
     mouseswipe: mouseswipe,
     hold: hold,
-    mousehold: mousehold,
+    //mousehold: mousehold,
     pinch: pinch, // There is no mouse-based alternative to this
   };
 }());

@@ -84,9 +84,9 @@ var GestureDetector = (function() {
     });
   };
 
-  // 
+  //
   // Internal methods
-  // 
+  //
 
   GD.prototype.handleEvent = function(e) {
     var handler = this.state[e.type];
