@@ -9,8 +9,7 @@
   "permissions": [
     "mozbrowser",
     "power",
-    "mozApps",
-    "mobileconnection"
+    "mozApps"
   ],
   "locales": {
     "ar": {
