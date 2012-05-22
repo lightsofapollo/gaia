@@ -3,9 +3,9 @@
   "version": "0.0.1",
   "private": true,
   "dependencies": {
-    "mocha": "~1.0"
+    "mocha": "~1.0",
     "test-agent": "0.5.0",
-    "chai": "0.5.3"
-    "marionette-client": "0.3.0",
+    "chai": "0.5.3",
+    "marionette-client": "0.3.0"
   }
 }
