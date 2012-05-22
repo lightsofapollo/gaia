@@ -10,8 +10,7 @@
     "telephony",
     "contacts",
     "power",
-    "mozApps",
-    "mobileconnection"
+    "mozApps"
   ],
   "locales": {
     "ar": {

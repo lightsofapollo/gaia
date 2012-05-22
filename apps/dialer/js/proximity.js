@@ -9,19 +9,19 @@ var ProximityHandler = {
   },
 
   enable: function ph_enable() {
-    window.addEventListener('userproximity', this);
+    window.addEventListener('deviceproximity', this);
   },
 
   disable: function ph_disable() {
-    window.removeEventListener('userproximity', this);
+    window.removeEventListener('deviceproximity', this);
     this.screenOff.classList.remove('displayed');
   },
 
   handleEvent: function ph_handleEvent(evt) {
-    if (evt.type != 'userproximity')
+    if (evt.type != 'deviceproximity')
       return;
 
-    if (evt.near) {
+    if (evt.value == evt.min) {
       this.screenOff.classList.add('displayed');
     } else {
       this.screenOff.classList.remove('displayed');
