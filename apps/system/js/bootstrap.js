@@ -13,17 +13,10 @@ function startup() {
     // FIXME Loop over all the registered activities from the applications
     //       list and start up the first application found registered for
     //       the HOME activity.
-    if (document.location.protocol === 'file:') {
-      var paths = document.location.pathname.split('/');
-      paths.pop();
-      paths.pop();
-      var src = 'file://' + paths.join('/') + '/homescreen/index.html';
-    } else {
-      var host = document.location.host;
-      var domain = host.replace(/(^[\w\d]+\.)?([\w\d]+\.[a-z]+)/, '$2');
-      var src = 'http://homescreen.' + domain;
-    }
-    document.getElementById('homescreen').src = src;
+    var host = document.location.host;
+    var domain = host.replace(/(^[\w\d]+\.)?([\w\d]+\.[a-z]+)/, '$2');
+    var homescreenURL = 'http://homescreen.' + domain;
+    document.getElementById('homescreen').src = homescreenURL;
 
     ScreenManager.turnScreenOn();
   });
@@ -37,8 +30,8 @@ function startup() {
   window.addEventListener("devicemotion", dumbListener2, false);
   
   window.setTimeout(function() {
-    window.removeEventListener("devicemotion", dumbListener2, false);
-  }, 2000);
+      window.removeEventListener("devicemotion", dumbListener2, false);
+    }, 2000);
 }
 
 var SoundManager = {

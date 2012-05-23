@@ -8,19 +8,10 @@
     <link rel="stylesheet" type="text/css" media="screen" href="style/dialogs.css"/>
     <link rel="stylesheet" type="text/css" media="screen" href="style/settings.css"/>
     <link rel="resource" type="application/l10n" href="locale/settings.properties"/>
-    <!-- Compatibility -->
-    <script>
-      if (document.location.protocol === 'file:') {
-        var paths = document.location.pathname.split('/');
-        paths.pop();
-        paths.pop();
-        paths.pop();
-        var src = 'file://' + paths.join('/') + '/webapi.js';
-      } else {
-        var host = document.location.host;
-        var domain = host.replace(/(^[\w\d]+\.)?([\w\d]+\.[a-z]+)/, '$2');
-        var src = 'http://' + domain + '/webapi.js';
-      }
+    <script type="text/javascript">
+      var host = document.location.host;
+      var domain = host.replace(/(^[\w\d]+\.)?([\w\d]+\.[a-z]+)/, '$2');
+      var src = 'http://' + domain + '/webapi.js';
       document.write('<script src="' + src + '"><\/script>');
     </script>
     <script type="text/javascript" src="js/settings.js"></script>
@@ -259,10 +250,10 @@
             <span></span>
           </label>
         </li>
-        <li id="language-pt-br">
-          <a dir="ltr">Português (do Brasil)</a>
+        <li id="language-tr">
+          <a dir="ltr">Türkçe</a>
           <label>
-            <input type="radio" name="language.current" value="pt-BR"/>
+            <input type="radio" name="language.current" value="tr"/>
             <span></span>
           </label>
         </li>
@@ -270,13 +261,6 @@
           <a dir="ltr">Русский</a>
           <label>
             <input type="radio" name="language.current" value="ru"/>
-            <span></span>
-          </label>
-        </li>
-        <li id="language-tr">
-          <a dir="ltr">Türkçe</a>
-          <label>
-            <input type="radio" name="language.current" value="tr"/>
             <span></span>
           </label>
         </li>

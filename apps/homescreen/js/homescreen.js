@@ -423,11 +423,6 @@ IconGrid.prototype = {
 
     var app = appscreen.getAppByOrigin(target.dataset.url);
     if (!isInEditMode()) {
-      if (!app.launch) {
-        window.open(app.origin);
-        return;
-      }
-
       app.launch();
       return;
     }
