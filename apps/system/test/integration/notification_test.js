@@ -8,12 +8,6 @@ suite('notifications', function() {
     device = driver;
   });
 
-  function isScreenEnabled() {
-    device.executeScript(function() {
-      return window.wrappedJSObject.navigator.mozPower.screenEnabled;
-    }, MochaTask.nextNodeStyle);
-  }
-
   setup(function() {
     this.timeout(10000);
     yield device.setScriptTimeout(5000);
@@ -25,7 +19,7 @@ suite('notifications', function() {
     var title = 'uniq--integration--uniq';
     var description = 'q--desc--q';
 
-    var data = yield device.executeAsyncScript(function(text, desc) {
+    yield device.executeAsyncScript(function(text, desc) {
       window.addEventListener('mozChromeEvent', function(e) {
         var detail = e.detail;
         if (detail.type === 'desktop-notification') {
@@ -44,7 +38,7 @@ suite('notifications', function() {
       '#notifications-container'
     );
 
-    var text = yield container.getAttribute('outerHTML');
+    var text = yield container.getAttribute('innerHTML');
     assert.ok(text, 'container should have notifications');
 
     assert.include(text, title, 'should include title');
