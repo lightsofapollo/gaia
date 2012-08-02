@@ -3,14 +3,9 @@ requireCommon('/test/marionette.js');
 suite('notifications', function() {
 
   var device;
-  var chromeEvent;
 
   testSupport.startMarionette(function(driver) {
     device = driver;
-    chromeEvent = testSupport.system.chromeEvent.bind(
-      this,
-      device
-    );
   });
 
   function isScreenEnabled() {
@@ -25,7 +20,7 @@ suite('notifications', function() {
     yield device.goUrl('app://system.gaiamobile.org');
   });
 
-  test('basic notification', function() {
+  test('text/description notification', function() {
 
     var title = 'uniq--integration--uniq';
     var description = 'q--desc--q';
