@@ -1,5 +1,3 @@
-requireCommon('/test/marionette.js');
-require('apps/calendar/test/integration/integration_helper.js');
 require('apps/calendar/test/integration/app.js');
 
 /** require calc stuff to make things easier */

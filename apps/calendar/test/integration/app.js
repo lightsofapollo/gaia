@@ -106,7 +106,7 @@ CalendarIntegration.prototype = {
 
       yield IntegrationHelper.sendAtom(
         device,
-        '/apps/calendar/test/integration/atoms/gaia_unlock',
+        '/tests/js/atoms/gaia_unlock',
         true,
         next
       );

@@ -1,5 +1,3 @@
-requireCommon('/test/marionette.js');
-require('apps/calendar/test/integration/integration_helper.js');
 require('apps/calendar/test/integration/app.js');
 
 require('apps/calendar/js/calendar.js');
@@ -25,7 +23,7 @@ suite('calendar - launch', function() {
     yield device.setScriptTimeout(15000);
     yield helper.importScript(
       device,
-      '/tests/marionette/gaiatest/gaia_apps.js',
+      '/tests/js/atoms/gaia_apps.js',
       MochaTask.nodeNext
     );
 

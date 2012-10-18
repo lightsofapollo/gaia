@@ -6,13 +6,15 @@ window.location.host = 'localhost';
 
 window.require = function(url, cb) {
   if (url.indexOf('/common') === 0) {
-    url = '../../' + url;
+    url = '../../test_apps/test-agent/' + url;
   }
 
   if (url.indexOf('apps/') === 0) {
-    url = '../../../../' + url;
+    url = '../../' + url;
   }
+
   importScripts(url);
+
   if (typeof(cb) === 'function') {
     cb();
   }
@@ -110,7 +112,7 @@ if (!(reporter in mocha.reporters)) {
     timeout: 6000
   });
 
-  require('integration_helper.js');
+  require('helper.js');
 
   window.xpcArgv.slice(2).forEach(function(test) {
     require(test);
@@ -122,3 +124,4 @@ if (!(reporter in mocha.reporters)) {
 
   window.xpcEventLoop.start();
 }
+

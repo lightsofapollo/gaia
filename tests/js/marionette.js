@@ -13,7 +13,7 @@
    * @return {String} absolute path output.
    */
   support.appPath = function(path) {
-    return _IMPORT_ROOT + '/../../../../' + path;
+    return _IMPORT_ROOT + '/../../' + path;
   };
 
   support.startMarionette = function(cb) {
@@ -23,14 +23,11 @@
       var driver;
       this.timeout(10000);
 
-      if (typeof(window.TCPSocket) !== 'undefined') {
-        driver = new Marionette.Drivers.MozTcp();
-      } else {
-        driver = new Marionette.Drivers.HttpdPolling({
-          //should be an environmental variable
-          proxyUrl: 'http://localhost:8080/marionette'
-        });
+      if (typeof(window.TCPSocket) === 'undefined') {
+        throw new Error('TCPSocket must be present to run integration tests');
       }
+
+      driver = new Marionette.Drivers.MozTcp();
 
       yield driver.connect(MochaTask.next);
 
@@ -50,3 +47,4 @@
 
   }
 }(this));
+

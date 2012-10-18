@@ -333,8 +333,8 @@ INJECTED_GAIA = "$(MOZ_TESTS)/browser/gaia"
 
 TEST_PATH=gaia/tests/${TEST_FILE}
 
-ifneq ($(TESTS), '')
-	ifneq ($(APP), '')
+ifeq ($(TESTS),)
+	ifneq ($(strip APP),)
 		TESTS=$(shell find apps/$(APP)/test/integration/ -name "*_test.js" -type f )
 	else
 		TESTS=$(shell find apps -name "*_test.js" -type f | grep integration)
@@ -342,8 +342,7 @@ ifneq ($(TESTS), '')
 endif
 .PHONY: test-integration
 test-integration:
-	echo $(TESTS)
-	@test_apps/test-agent/common/test/bin/test $(TESTS)
+	@./tests/js/bin/runner $(TESTS)
 
 .PHONY: tests
 tests: webapp-manifests offline
