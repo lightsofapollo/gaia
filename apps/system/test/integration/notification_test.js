@@ -1,5 +1,3 @@
-requireCommon('/test/marionette.js');
-
 suite('notifications', function() {
 
   var device;
@@ -11,7 +9,7 @@ suite('notifications', function() {
   setup(function() {
     this.timeout(10000);
     yield device.setScriptTimeout(5000);
-    yield device.goUrl(testSupport.gaiaUrl('system'));
+    yield device.goUrl(IntegrationHelper.gaiaUrl('system'));
   });
 
   test('text/description notification', function() {

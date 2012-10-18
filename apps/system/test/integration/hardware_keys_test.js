@@ -1,4 +1,3 @@
-requireCommon('/test/marionette.js');
 require('apps/system/test/integration/helper.js');
 
 suite('hardware keys', function() {
@@ -22,7 +21,7 @@ suite('hardware keys', function() {
   setup(function() {
     this.timeout(10000);
     yield device.setScriptTimeout(5000);
-    yield device.goUrl(testSupport.gaiaUrl('system'));
+    yield device.goUrl(IntegrationHelper.gaiaUrl('system'));
   });
 
   test('power button', function() {
