@@ -108,9 +108,12 @@ var AppIntegration = (function() {
      *
      * @param {Function} generator steps to task.
      * @param {Function} callback callback function.
+     * @param {Object} [context=this] optional context.
      */
-    task: function(generator, callback) {
+    task: function(generator, callback, context) {
       callback = (callback || this.defaultCallback);
+      context = (context || this);
+
       var instance;
 
       function next(err, value) {
@@ -136,7 +139,7 @@ var AppIntegration = (function() {
       app.device = Object.create(app.device);
       app.device.defaultCallback = next;
 
-      var instance = generator(app, next, callback);
+      var instance = generator.call(context, app, next, callback);
       instance.next();
     },
 

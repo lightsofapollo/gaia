@@ -1,5 +1,22 @@
+/* tools from calendar */
+require('/apps/calendar/js/calendar.js');
+require('/apps/calendar/js/calc.js');
+require('/apps/calendar/js/input_parser.js');
+/** views */
+require('/apps/calendar/test/integration/calendar_view.js');
+require('/apps/calendar/test/integration/views/modify_event_view.js');
+require('/apps/calendar/test/integration/views/month_view.js');
+require('/apps/calendar/test/integration/views/months_day_view.js');
+
+/* factories */
+require('/apps/calendar/test/unit/support/factory.js');
+require('/apps/calendar/test/integration/factory/forms.js');
+
+/* common */
 require('/tests/js/app_integration.js');
-require('/tests/js/integration_helper.js');
+
+/* extra assertions */
+require('/apps/calendar/test/assertions.js');
 
 function CalendarIntegration(device) {
   AppIntegration.apply(this, arguments);
@@ -24,6 +41,7 @@ CalendarIntegration.prototype = {
     showSettingsBtn: '#time-header button.settings',
     addEventBtn: '#time-header a[href="/add/"]',
     eventSaveBtn: '#modify-event-view > header .save',
+    eventDeleteBtn: '#modify-event-view .delete-record',
 
     /** lists */
     calendarList: '#settings .calendars',
@@ -35,6 +53,30 @@ CalendarIntegration.prototype = {
     /** generic */
     present: '.present'
   },
+
+  get monthView() {
+    if (!this._monthView) {
+      this._monthView = new MonthView(this);
+    }
+
+    return this._monthView;
+  },
+
+  get monthsDayView() {
+    if (!this._monthsDayView) {
+      this._monthsDayView = new MonthsDayView(this);
+    }
+
+    return this._monthsDayView;
+  },
+
+  get modifyEventView() {
+    if (!this._modifyEventView) {
+      this._modifyEventView = new ModifyEventView(this);
+    }
+    return this._modifyEventView;
+  },
+
   /**
    * Deletes the calendar database and closes the app.
    */
