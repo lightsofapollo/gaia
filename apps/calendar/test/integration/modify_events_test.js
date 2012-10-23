@@ -173,11 +173,16 @@ suite('calendar - modify events', function() {
     // verify its gone
     yield app.waitUntilElement(monthView, 'displayed');
 
-    yield app.monthsDayView.eventByTitle(newValues.title, function(err) {
-      assert.ok(err);
-      assert.instanceOf(err, Marionette.Error.NoSuchElement);
-      MochaTask.next();
-    });
+    var error;
+
+    try {
+      yield app.monthsDayView.eventByTitle(newValues.title);
+    } catch (e) {
+      error = e;
+    } finally {
+      assert.ok(error);
+      assert.instanceOf(error, Marionette.Error.NoSuchElement);
+    }
   });
 
 });

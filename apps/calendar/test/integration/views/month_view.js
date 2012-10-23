@@ -10,9 +10,9 @@ MonthView.prototype = {
    */
   navigate: function(callback) {
     this.app.task(function(app, next, done) {
-      yield app.device.executeScript(function() {
-        window.wrappedJSObject.Calendar.App.go('/month/');
-      });
+      yield app.device.executeScript(
+        'window.wrappedJSObject.Calendar.App.go("/month/");'
+      );
 
       var el = yield this._findElement('_element', 'monthView', next);
       yield app.waitUntilElement(el, 'displayed');

@@ -82,15 +82,18 @@ CalendarIntegration.prototype = {
    */
   close: function(callback) {
     var self = this;
+
     this.task(function(app, next, done) {
       var device = app.device;
-      yield device.executeScript(function() {
-        window.wrappedJSObject.Calendar.App.db.deleteDatabase(function() {
-        });
-      });
+
+      yield device.executeScript(
+        // yuck! but Function.toString is broken in sub-files
+        // in xpcshell right now. (Bug 804404)
+        'window.wrappedJSObject.Calendar.App' +
+        '.db.deleteDatabase(function() {}); '
+      );
 
       yield AppIntegration.prototype.close.call(self, next);
-
       done();
     }, callback);
   }
