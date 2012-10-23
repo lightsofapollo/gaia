@@ -117,9 +117,13 @@ var AppIntegration = (function() {
       var instance;
 
       function next(err, value) {
-        if (err) {
-          instance.close();
-          callback(err, null);
+        if (err && !(err instanceof StopIteration)) {
+          try {
+            instance.throw(err);
+          } catch (e) {
+            callback(e, null);
+            instance.close();
+          }
         } else {
           try {
             instance.send(value);
@@ -156,9 +160,12 @@ var AppIntegration = (function() {
         // will switch back to the main frame.
         yield device.switchToFrame();
 
-        yield device.executeScript(function(app) {
-          window.wrappedJSObject.WindowManager.kill(app);
-        }, [self.origin]);
+        var script = 'window.wrappedJSObject.WindowManager.kill("' +
+                        self.origin +
+                      '")';
+
+        // Function.toString is busted (804404)
+        yield device.executeScript(script);
 
         done();
       }, callback);
@@ -307,9 +314,11 @@ var AppIntegration = (function() {
      */
     remoteTime: function(callback) {
       this.task(function(app, next, done) {
-        var ms = yield app.device.executeScript(function() {
-          return Date.now();
-        });
+
+        // Function.toString is busted (804404)
+        var ms = yield app.device.executeScript(
+          'return Date.now();'
+        );
 
         done(null, ms);
       }, callback);
