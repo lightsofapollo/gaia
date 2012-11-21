@@ -1,5 +1,5 @@
 requireApp('calendar/test/unit/helper.js', function() {
-  requireLib('input_parser.js');
+  requireLib('utils/input_parser.js');
   requireLib('views/modify_event.js');
   requireLib('models/account.js');
   requireLib('models/calendar.js');
@@ -50,7 +50,7 @@ suite('views/modify_event', function() {
   var InputParser;
 
   suiteSetup(function() {
-    InputParser = Calendar.InputParser;
+    InputParser = Calendar.Utils.InputParser;
   });
 
   teardown(function() {
