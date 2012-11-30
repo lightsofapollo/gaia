@@ -41,6 +41,14 @@ suite('views/modify_event', function() {
     return field.value;
   }
 
+  function escapeHTML(html) {
+    var template = new Calendar.Template(function() {
+      return this.h('value');
+    });
+
+    return template.render({ value: html });
+  }
+
   var triggerEvent;
 
   suiteSetup(function() {
@@ -260,9 +268,7 @@ suite('views/modify_event', function() {
       var curCal = getField('currentCalendar');
       assert.isTrue(curCal.readOnly, 'current calendar readonly');
 
-      var expected = Calendar.Template.handlers.h(
-        event.remote.description
-      );
+      var expected = escapeHTML(event.remote.description);
 
       assert.equal(
         getField('description').innerHTML,
