@@ -22,9 +22,15 @@ Calendar.ns('Controllers').Sync = (function() {
 
       // used instead of bind for testing reasons.
       account.on('add', function(id, data) {
+        var start = Date.now();
         self.emit('sync start');
         self._syncAccount(data, function() {
           self.emit('sync complete');
+          console.log(
+            'FULLY SYNCED ACCOUNT:',
+            JSON.stringify(data), 'in :', (Date.now() - start)
+          );
+          Calendar._syncTime = (Date.now() - start);
         });
       });
     },

@@ -2096,6 +2096,16 @@ function write (chunk) {
         }
       }
 
+      var last = 0;
+      var self = this;
+      xhr.onprogress = function(event) {
+        var data = xhr.responseText.substr(last, event.loaded - last);
+        last = event.loaded;
+        if (self.ondata) {
+          self.ondata(data);
+        }
+      }
+
       xhr.onreadystatechange = function onReadyStateChange() {
         var data;
         if (xhr.readyState === 4) {
@@ -2665,13 +2675,20 @@ function write (chunk) {
       var self = this;
       var req = this.xhr;
       req.data = this._createPayload();
+      var parser;
+
+      req.ondata = function(data) {
+        parser = self.sax.write(data);
+      }
 
       // in the future we may stream data somehow
       req.send(function xhrResult() {
         var xhr = req.xhr;
         if (xhr.status > 199 && xhr.status < 300) {
           // success
-          self.sax.write(xhr.responseText).close();
+          //self.sax.write(xhr.responseText).close();
+          //self.sax.close();
+          parser.close();
           self._processResult(req, callback);
         } else {
           // fail
