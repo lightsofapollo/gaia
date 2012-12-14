@@ -71,8 +71,7 @@ suite('controllers/alarm', function() {
     var removed = null;
     var mockRequest = {};
     var realLockApi;
-    var lockStatus = 0;
-    var wakelock;
+    var wakeLock;
 
     suiteSetup(function() {
       realApi = navigator.mozSetMessageHandler;
@@ -95,16 +94,17 @@ suite('controllers/alarm', function() {
       };
 
       wakeLock = {
+        done: null, 
+
         unlock: function() {
-          lockStatus = 2;
+          wakeLock.done();
         }
       };
       realLockApi = navigator.requestWakeLock;
       navigator.requestWakeLock = function(type) {
-        if (type === 'wifi') {
-          lockStatus = 1;
+        if (type === 'wifi')
           return wakeLock;
-        } else
+        else
           return realLockApi(type);
       };
     });
@@ -112,6 +112,7 @@ suite('controllers/alarm', function() {
     suiteTeardown(function() {
       navigator.mozSetMessageHandler = realApi;
       navigator.mozAlarms = realAlarmApi;
+      navigator.requestWakeLock = realLockApi;
     });
 
     setup(function() {
@@ -339,7 +340,6 @@ suite('controllers/alarm', function() {
 
       currentAlarmTime = null;
       removed = null;
-      lockStatus = 0;
 
       // Test setting manual sync
       settingStore.set('syncFrequency', null);
@@ -368,18 +368,18 @@ suite('controllers/alarm', function() {
       sendId(3);
       assert.equal(removed, 2);
 
-      // Test triggering the sync
-      assert.equal(lockStatus, 0);
-      subject._handleSyncMessage();
-      assert.equal(lockStatus, 2);
-      sendId(4);
-      assert.equal(removed, 3);
-
       // Test setting sync off
       currentAlarmTime = null;
       settingStore.set('syncFrequency', null);
       assert.equal(currentAlarmTime, null);
-      assert.equal(removed, 4);
+      assert.equal(removed, 3);
+    });
+
+    test('sync alarm triggering', function(done) {
+      wakeLock.done = done;
+
+      subject._handleSyncMessage();
+      // This test will succeed when the wifi lock is released
     });
   });
 
