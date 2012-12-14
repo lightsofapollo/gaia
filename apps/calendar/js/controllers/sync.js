@@ -42,6 +42,12 @@ Calendar.ns('Controllers').Sync = (function() {
      */
     all: function() {
       var account = this.app.store('Account');
+      
+      // Check if we have no accounts
+      if (account.cached.length === 0) {
+        this.emit('syncComplete');
+        return;
+      }
 
       for (var key in account.cached) {
         this.account(account.cached[key]);
