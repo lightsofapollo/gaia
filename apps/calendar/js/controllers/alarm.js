@@ -17,6 +17,7 @@ Calendar.ns('Controllers').Alarm = (function() {
 
       this._wifiLock = null;
       this.app.syncController.on('syncComplete', function() {
+        console.log('syncComplete foo!');
         if (self._wifiLock !== null)
           self._wifiLock.unlock();
       });
