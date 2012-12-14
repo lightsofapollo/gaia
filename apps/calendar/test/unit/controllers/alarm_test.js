@@ -70,6 +70,9 @@ suite('controllers/alarm', function() {
     var currentAlarmTime = null;
     var removed = null;
     var mockRequest = {};
+    var realLockApi;
+    var lockStatus = 0;
+    var wakelock;
 
     suiteSetup(function() {
       realApi = navigator.mozSetMessageHandler;
@@ -89,6 +92,20 @@ suite('controllers/alarm', function() {
           removed = id;
           currentAlarmTime = null;
         }
+      };
+
+      wakeLock = {
+        unlock: function() {
+          lockStatus = 2;
+        }
+      };
+      realLockApi = navigator.requestWakeLock;
+      navigator.requestWakeLock = function(type) {
+        if (type === 'wifi') {
+          lockStatus = 1;
+          return wakeLock;
+        } else
+          return realLockApi(type);
       };
     });
 
@@ -322,6 +339,7 @@ suite('controllers/alarm', function() {
 
       currentAlarmTime = null;
       removed = null;
+      lockStatus = 0;
 
       // Test setting manual sync
       settingStore.set('syncFrequency', null);
@@ -350,11 +368,18 @@ suite('controllers/alarm', function() {
       sendId(3);
       assert.equal(removed, 2);
 
+      // Test triggering the sync
+      assert.equal(lockStatus, 0);
+      subject._handleSyncMessage();
+      assert.equal(lockStatus, 2);
+      sendId(4);
+      assert.equal(removed, 3);
+
       // Test setting sync off
       currentAlarmTime = null;
       settingStore.set('syncFrequency', null);
       assert.equal(currentAlarmTime, null);
-      assert.equal(removed, 3);
+      assert.equal(removed, 4);
     });
   });
 
