@@ -1,0 +1,9 @@
+body {
+  font-size: 22px;
+  color: blue;
+}
+
+ul li {
+  padding: 30px;
+  border: 1px solid gray;
+}

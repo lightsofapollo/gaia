@@ -1,0 +1,60 @@
+{
+  "name": "Keyboard Integration",
+  "description": "UI for keyboard tests",
+  "launch_path": "/index.html",
+  "developer": {
+    "name": "The Gaia Team",
+    "url": "https://github.com/mozilla-b2g/gaia"
+  },
+  "locales": {
+    "ar": {
+      "name": "Keyboard Integration",
+      "description": "UI for keyboard tests"
+    },
+    "de": {
+      "name": "Keyboard Integration",
+      "description": "UI for keyboard tests"
+    },
+    "el": {
+      "name": "Keyboard Integration",
+      "description": "UI for keyboard tests"
+    },
+    "en-US": {
+      "name": "Keyboard Integration",
+      "description": "UI for keyboard tests"
+    },
+    "es": {
+      "name": "Keyboard Integration",
+      "description": "UI for keyboard tests"
+    },
+    "fr": {
+      "name": "Keyboard Integration",
+      "description": "UI for keyboard tests"
+    },
+    "it": {
+      "name": "Keyboard Integration",
+      "description": "UI for keyboard tests"
+    },
+    "pt-BR": {
+      "name": "Keyboard Integration",
+      "description": "UI for keyboard tests"
+    },
+    "ru": {
+      "name": "Keyboard Integration",
+      "description": "UI for keyboard tests"
+    },
+    "tr": {
+      "name": "Keyboard Integration",
+      "description": "UI for keyboard tests"
+    },
+    "zh-TW": {
+      "name": "Keyboard Integration",
+      "description": "UI for keyboard tests"
+    }
+  },
+  "default_locale": "en-US",
+  "icons": {
+    "128": "/style/icons/Blank.png"
+  }
+}
+
