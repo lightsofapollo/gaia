@@ -101,7 +101,6 @@ var InputFocus = (function(window) {
         } else {
           var offset = element.getBoundingClientRect();
           var adjusted = {
-            left: rect.left - offset.left,
             top: rect.top - offset.top,
             height: rect.height,
             width: rect.width
@@ -129,57 +128,49 @@ var InputFocus = (function(window) {
       var parent = element.ownerDocument.defaultView;
 
       var result = {
-        top: rect.top,
-        left: rect.left,
+        top: rect.top - borderTop,
         height: rect.height,
         width: rect.width
       };
 
-      var isVisible = this._yAxisVisible(
-        rect.top,
-        rect.height,
-        parent.innerHeight
-      );
+      var isVisible = true;
 
-      isVisible = isVisible && this._scrollablesVisible(
-        element, result
-      );
-
-      for (; parent !== parent.parent; parent = parent.parent) {
+      do {
         var frame = parent.frameElement;
-        if (frame) {
-          var frameRect = frame.getBoundingClientRect();
-          var left =
-            parent.getComputedStyle(frame, '').borderLeftWidth;
-
-          var top =
-            parent.getComputedStyle(frame, '').borderTopWidth;
-
-          result.left += frameRect.left + parseInt(left, 10);
-          result.top += frameRect.top + parseInt(top, 10);
-
-          if (isVisible) {
-            isVisible = this._yAxisVisible(
-              result.top,
-              result.height,
-              parent.innerHeight
-            );
-          }
-        }
 
         if (isVisible) {
-          this._scrollablesVisible(element, result);
+          isVisible = this._yAxisVisible(
+            result.top,
+            result.height,
+            parent.innerHeight
+          );
+
+          isVisible = isVisible && this._scrollablesVisible(
+            element, result
+          );
         }
-      }
+
+        if (frame) {
+          var frameRect = frame.getBoundingClientRect();
+          var top =
+            parseInt(parent.getComputedStyle(frame, '').borderTopWidth, 10);
+
+          result.top += frameRect.top + top;
+        }
+
+      } while (
+        (parent !== parent.parent) &&
+        (parent = parent.parent)
+      );
 
       return [isVisible, result];
     },
 
-    _focusCurrent: function(element, rect) {
+    _focusCurrent: function(element) {
       if (!this.focusedElement)
         return;
 
-      var [visible, rect] = this.yAxisVisible(this.focusedElement)
+      var [visible, rect] = this.yAxisVisible(this.focusedElement);
 
       if (visible)
         return;
