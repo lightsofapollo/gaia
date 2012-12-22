@@ -87,95 +87,19 @@ var InputFocus = (function(window) {
       return null;
     },
 
-    _absOffset: function(element) {
-      var win = element.ownerDocument.defaultView;
-      var rect = element.getBoundingClientRect();
-      var docEl = win.document.documentElement;
-
-      return {
-        top: rect.top + win.pageYOffset - docEl.clientTop,
-        left: rect.left + win.pageXOffset - docEl.clientLeft,
-        height: rect.height,
-        width: rect.width
-      };
+    _yAxisVisible: function(top, height, maxHeight) {
+      if (top > 0 && (top + height) < maxHeight) {
+        return true;
+      }
+      return false;
     },
 
-    _visibleOffset: function(win, rect) {
-      var docEl = win.document.documentElement;
-
-      var scrollX = win.scrollX;
-      var scrollY = win.scrollY;
-
-      var top = rect.top + win.pageYOffset - docEl.clientTop;
-      var left = rect.left + win.pageXOffset - docEl.clientLeft;
-
-      return {
-        top: top - win.scrollY,
-        left: left - win.scrollX,
-        width: rect.width,
-        height: rect.height
-      };
-    },
-
-    _visible: function(rect, width, height) {
-      var yVisible = false;
-      var xVisible = false;
-
-      if (rect.top > 0 && (rect.top + rect.height) < height) {
-        yVisible = true;
-      }
-
-      if (rect.left > 0 && (rect.left + rect.width) < width) {
-        xVisible = true;
-      }
-
-      return { left: xVisible, top: yVisible };
-    },
-
-    _focusCurrent: function(element, rect) {
-      var scroll = element || this.focusedElement;
-
-      if (!scroll) {
-        console.log('no element to focus...');
-        return;
-      }
-
-      rect = rect || scroll.getBoundingClientRect();
-
-      var win = scroll.ownerDocument.defaultView;
-
-      if (win && win.parent && win.frameElement) {
-        var frameRect = win.frameElement.getBoundingClientRect();
-        var adjustedRect = {
-          top: frameRect.top + rect.top,
-          left: frameRect.left + rect.left,
-          height: rect.height,
-          width: rect.width
-        };
-
-        this._focusCurrent(win.frameElement, adjustedRect);
-      }
-
-      while ((scroll = this._findScrollable(scroll))) {
-        if (scroll.window && scroll.self === scroll) {
-          var top = 0;
-          var left = 0;
-
-          var visible = this._visible(
-            rect, scroll.innerWidth, scroll.innerHeight
-          );
-
-          if (!visible.top)
-            top += rect.top;
-
-          if (!visible.left)
-            left += rect.left;
-
-          scroll.scrollBy(left, top);
-
+    _scrollablesVisible: function(element, rect) {
+      while ((element = this._findScrollable(element))) {
+        if (element.window && element.self === element) {
           break;
         } else {
-          var offset = scroll.getBoundingClientRect();
+          var offset = element.getBoundingClientRect();
           var adjusted = {
             left: rect.left - offset.left,
             top: rect.top - offset.top,
@@ -183,20 +107,89 @@ var InputFocus = (function(window) {
             width: rect.width
           };
 
-          var visible = this._visible(
-            adjusted, scroll.clientWidth, scroll.clientHeight
+          var visible = this._yAxisVisible(
+            adjusted.top,
+            adjusted.height,
+            element.clientHeight
           );
 
-          if (!visible.top) {
-            scroll.scrollTop += adjusted.top;
-          }
+          if (!visible)
+            return false;
 
-          if (!visible.left) {
-            scroll.scrollLeft += adjusted.left;
-          }
-
-          scroll = scroll.parentNode;
+          element = element.parentNode;
         }
+      }
+
+      return true;
+    },
+
+    yAxisVisible: function(element) {
+      // scrollable frames can be ignored we just care about iframes...
+      var rect = element.getBoundingClientRect();
+      var parent = element.ownerDocument.defaultView;
+
+      var result = {
+        top: rect.top,
+        left: rect.left,
+        height: rect.height,
+        width: rect.width
+      };
+
+      var isVisible = this._yAxisVisible(
+        rect.top,
+        rect.height,
+        parent.innerHeight
+      );
+
+      isVisible = isVisible && this._scrollablesVisible(
+        element, result
+      );
+
+      for (; parent !== parent.parent; parent = parent.parent) {
+        var frame = parent.frameElement;
+        if (frame) {
+          var frameRect = frame.getBoundingClientRect();
+          var left =
+            parent.getComputedStyle(frame, '').borderLeftWidth;
+
+          var top =
+            parent.getComputedStyle(frame, '').borderTopWidth;
+
+          result.left += frameRect.left + parseInt(left, 10);
+          result.top += frameRect.top + parseInt(top, 10);
+
+          if (isVisible) {
+            isVisible = this._yAxisVisible(
+              result.top,
+              result.height,
+              parent.innerHeight
+            );
+          }
+        }
+
+        if (isVisible) {
+          this._scrollablesVisible(element, result);
+        }
+      }
+
+      return [isVisible, result];
+    },
+
+    _focusCurrent: function(element, rect) {
+      if (!this.focusedElement)
+        return;
+
+      var [visible, rect] = this.yAxisVisible(this.focusedElement)
+
+      if (visible)
+        return;
+
+      if (rect.top > (this.window.innerHeight / 2)) {
+        // align to bottom
+        this.focusedElement.scrollIntoView(false);
+      } else {
+        // align to top
+        this.focusedElement.scrollIntoView(true);
       }
     }
   };
