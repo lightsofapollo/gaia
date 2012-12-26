@@ -40,6 +40,12 @@ var InputFocus = (function(window) {
       this.focusedElement = null;
     },
 
+    focusElement: function(element) {
+      if (!FormVisibility.isVisible(element)) {
+        element.scrollIntoView(false);
+      }
+    },
+
     onfocus: function(evt) {
       if (evt.target.window && evt.target === evt.target.window)
         return;
@@ -51,31 +57,40 @@ var InputFocus = (function(window) {
       this.focusedElement = evt.target;
 
       this._focusTimer = setTimeout(
-        this._focusCurrent.bind(this),
+        this.focusElement.bind(this, evt.target),
         FOCUS_TIME
       );
     },
+  };
 
-    _findScrollable: function(node) {
-      var nodeContent = node.ownerDocument.defaultView;
+  let FormVisibility = {
+
+    /**
+     * Searches upwards in the DOM for a "scrollable" element or window.
+     *
+     * @param {HTMLElement} node element to start search at.
+     * @return {Window|HTMLElement|Null} null when none are found window/element otherwise.
+     */
+    findScrollable: function fv_findScrollable(node) {
+      let nodeContent = node.ownerDocument.defaultView;
 
       while (!(node instanceof HTMLBodyElement)) {
-        var style = nodeContent.getComputedStyle(node, null);
-
-        var overflow = [style.getPropertyValue('overflow'),
+        let style = nodeContent.getComputedStyle(node, null);
+        let overflow = [style.getPropertyValue('overflow'),
                         style.getPropertyValue('overflow-x'),
                         style.getPropertyValue('overflow-y')];
 
-        var rect = node.getBoundingClientRect();
-        var isAuto = (overflow.indexOf('auto') != -1 &&
+        if (overflow.indexOf('scroll') !== -1)
+          return node;
+
+        let rect = node.getBoundingClientRect();
+        let isAuto = (overflow.indexOf('auto') != -1 &&
                      (rect.height < node.scrollHeight ||
                       rect.width < node.scrollWidth));
 
-        var isScroll = (overflow.indexOf('scroll') != -1);
 
-        if (isScroll || isAuto) {
+        if (isAuto)
           return node;
-        }
 
         node = node.parentNode;
       }
@@ -87,101 +102,92 @@ var InputFocus = (function(window) {
       return null;
     },
 
-    _yAxisVisible: function(top, height, maxHeight) {
-      if (top > 0 && (top + height) < maxHeight) {
-        return true;
-      }
-      return false;
+    /**
+     * Checks if "bottom" point of the position is visible.
+     *
+     * @param {Number} top position.
+     * @param {Number} height of the element.
+     * @param {Number} maxHeight of the window.
+     * @return {Boolean} true when visible.
+     */
+    yAxisVisible: function fv_yAxisVisible(top, height, maxHeight) {
+      return (top > 0 && (top + height) < maxHeight);
     },
 
-    _scrollablesVisible: function(element, rect) {
-      while ((element = this._findScrollable(element))) {
-        if (element.window && element.self === element) {
+    /**
+     * Searches up through the dom for scrollable elements
+     * which are not currently visible (relative to the viewport).
+     *
+     * @param {HTMLElement} element to start search at.
+     * @param {Object} pos .top, .height and .width of element.
+     */
+    scrollablesVisible: function fv_scrollablesVisible(element, pos) {
+      while ((element = this.findScrollable(element))) {
+        if (element.window && element.self === element)
           break;
-        } else {
-          var offset = element.getBoundingClientRect();
-          var adjusted = {
-            top: rect.top - offset.top,
-            height: rect.height,
-            width: rect.width
-          };
 
-          var visible = this._yAxisVisible(
-            adjusted.top,
-            adjusted.height,
-            element.clientHeight
-          );
+        let offset = element.getBoundingClientRect();
+        let adjusted = {
+          top: pos.top - offset.top,
+          height: pos.height,
+          width: pos.width
+        };
 
-          if (!visible)
-            return false;
+        let visible = this.yAxisVisible(
+          adjusted.top,
+          adjusted.height,
+          element.clientHeight
+        );
 
-          element = element.parentNode;
-        }
+        if (!visible)
+          return false;
+
+        element = element.parentNode;
       }
 
       return true;
     },
 
-    yAxisVisible: function(element) {
+    /**
+     * Verifies the element is visible in the viewport.
+     * Handles scrollable areas, frames and scrollable viewport(s) (windows).
+     *
+     * @param {HTMLElement} element to verify.
+     * @return {Boolean} true when visible.
+     */
+    isVisible: function fv_isVisible(element) {
       // scrollable frames can be ignored we just care about iframes...
-      var rect = element.getBoundingClientRect();
-      var parent = element.ownerDocument.defaultView;
+      let rect = element.getBoundingClientRect();
+      let parent = element.ownerDocument.defaultView;
 
-      var result = {
-        top: rect.top - borderTop,
+      // used to calculate the inner position of frames / scrollables.
+      let pos = {
+        top: rect.top,
         height: rect.height,
         width: rect.width
       };
 
-      var isVisible = true;
+      let visible = true;
 
       do {
-        var frame = parent.frameElement;
-
-        if (isVisible) {
-          isVisible = this._yAxisVisible(
-            result.top,
-            result.height,
-            parent.innerHeight
-          );
-
-          isVisible = isVisible && this._scrollablesVisible(
-            element, result
-          );
-        }
+        let frame = parent.frameElement;
+        visible = visible &&
+                  this.yAxisVisible(pos.top, pos.height, parent.innerHeight) &&
+                  this.scrollablesVisible(element, pos);
 
         if (frame) {
-          var frameRect = frame.getBoundingClientRect();
-          var top =
+          let frameRect = frame.getBoundingClientRect();
+          let top =
             parseInt(parent.getComputedStyle(frame, '').borderTopWidth, 10);
 
-          result.top += frameRect.top + top;
+          pos.top += frameRect.top + top;
         }
-
       } while (
         (parent !== parent.parent) &&
         (parent = parent.parent)
       );
 
-      return [isVisible, result];
-    },
-
-    _focusCurrent: function(element) {
-      if (!this.focusedElement)
-        return;
-
-      var [visible, rect] = this.yAxisVisible(this.focusedElement);
-
-      if (visible)
-        return;
-
-      if (rect.top > (this.window.innerHeight / 2)) {
-        // align to bottom
-        this.focusedElement.scrollIntoView(false);
-      } else {
-        // align to top
-        this.focusedElement.scrollIntoView(true);
-      }
+      return visible;
     }
   };
 
@@ -189,3 +195,5 @@ var InputFocus = (function(window) {
 
   return InputFocus;
 }(this));
+
+
