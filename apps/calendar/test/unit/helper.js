@@ -176,7 +176,9 @@
   requireApp('calendar/shared/js/l10n.js');
   requireApp('calendar/shared/js/l10n_date.js');
 
+  requireLib('ext/notamd.js');
   requireLib('calendar.js');
+  requireLib('load_config.js');
   requireLib('calc.js');
   requireLib('set.js');
   requireLib('batch.js');
