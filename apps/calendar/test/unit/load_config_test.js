@@ -1,7 +1,16 @@
-requireApp('calendar/test/unit/helper.js');
-
 suite('load_config', function() {
 
+  suiteSetup(function() {
+    var scripts = document.querySelectorAll(
+      'script[src*="from_loader_test.js"]'
+    );
+
+    if (scripts.length) {
+      Array.slice(scripts).forEach(function(item) {
+        item.parentNode.removeChild(item);
+      });
+    }
+  });
 
   function testExpectedError(plugin, name) {
     var msg = 'expected error loading: "' +
@@ -73,6 +82,11 @@ suite('load_config', function() {
         var scripts = document.querySelectorAll(
           'script[src*="from_loader_test.js"]'
         );
+
+        if (scripts.length > 1) {
+          console.log(scripts[0].outerHTML);
+          console.log(scripts[1].outerHTML);
+        }
 
         assert.length(scripts, 1, 'only loads once');
       });

@@ -1,6 +1,4 @@
-requireApp('calendar/test/unit/helper.js', function() {
-  requireLib('batch.js');
-});
+requireLib('batch.js');
 
 suite('batch', function() {
 

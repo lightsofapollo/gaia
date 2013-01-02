@@ -1,15 +1,13 @@
 requireCommon('test/synthetic_gestures.js');
 
-requireApp('calendar/test/unit/helper.js', function() {
-  require('/shared/js/gesture_detector.js');
+require('/shared/js/gesture_detector.js');
 
-  requireLib('utils/ordered_map.js');
-  requireLib('timespan.js');
-  requireLib('templates/month.js');
-  requireLib('views/time_parent.js');
-  requireLib('views/month_child.js');
-  requireLib('views/month.js');
-});
+requireLib('utils/ordered_map.js');
+requireLib('timespan.js');
+requireLib('templates/month.js');
+requireLib('views/time_parent.js');
+requireLib('views/month_child.js');
+requireLib('views/month.js');
 
 suite('views/month', function() {
   var subject,

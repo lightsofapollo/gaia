@@ -1,7 +1,5 @@
-requireApp('calendar/test/unit/helper.js', function() {
-  requireLib('worker/manager.js');
-  requireLib('controllers/service.js');
-});
+requireLib('worker/manager.js');
+requireLib('controllers/service.js');
 
 suite('controllers/service', function() {
 

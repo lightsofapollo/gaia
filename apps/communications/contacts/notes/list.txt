@@ -1,0 +1,10 @@
+We are spending a ton of time in reflows & css queries
+
+- only escape HTML if char exists... (maybe only use one span for all escapes).
+
+- in fixed_header.js#refresh we spend a ton of time here in selector
+  lookups. (We spent almost 1.3S in this method alone)
+
+- don't block loading contacts on async storage... (300-500ms)
+
+- in find limit the total number per filter request (lets say to 200?) 

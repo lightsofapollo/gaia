@@ -228,6 +228,8 @@ Calendar.App = (function(window) {
         document.body.classList.add(self.pendingClass);
       };
 
+      this._loader = NotAmd(Calendar.LoadConfig);
+
       this.timeController = new Calendar.Controllers.Time(this);
       this.syncController = new Calendar.Controllers.Sync(this);
       this.serviceController = new Calendar.Controllers.Service(this);
@@ -277,6 +279,10 @@ Calendar.App = (function(window) {
 
     isPending: function() {
       return this._pendingManger.isPending();
+    },
+
+    loadObject: function(name, callback) {
+      this._loader.load('group', name, callback);
     },
 
     /**

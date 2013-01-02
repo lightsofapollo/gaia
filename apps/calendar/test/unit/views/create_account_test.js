@@ -1,8 +1,6 @@
-requireApp('calendar/test/unit/helper.js', function() {
-  requireApp('calendar/js/templates/account.js');
-  requireApp('calendar/js/presets.js');
-  requireApp('calendar/js/views/create_account.js');
-});
+requireApp('calendar/js/templates/account.js');
+requireApp('calendar/js/presets.js');
+requireApp('calendar/js/views/create_account.js');
 
 suite('views/create_account', function() {
 

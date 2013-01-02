@@ -1,11 +1,9 @@
-requireApp('calendar/test/unit/helper.js', function() {
-  requireApp('calendar/shared/js/notification_helper.js');
-  requireLib('models/calendar.js');
-  requireLib('models/account.js');
-  requireLib('models/event.js');
+requireApp('calendar/shared/js/notification_helper.js');
+requireLib('models/calendar.js');
+requireLib('models/account.js');
+requireLib('models/event.js');
 
-  requireLib('controllers/alarm.js');
-});
+requireLib('controllers/alarm.js');
 
 suite('controllers/alarm', function() {
 

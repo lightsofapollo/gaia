@@ -1,7 +1,5 @@
-requireApp('calendar/test/unit/helper.js', function() {
-  requireLib('template.js');
-  requireLib('templates/day.js');
-});
+requireLib('template.js');
+requireLib('templates/day.js');
 
 suite('templates/day', function() {
   var subject;

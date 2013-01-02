@@ -1,10 +1,8 @@
-requireApp('calendar/test/unit/helper.js', function() {
-  requireLib('models/account.js');
-  requireLib('templates/account.js');
-  requireLib('presets.js');
-  requireLib('views/advanced_settings.js');
-  requireLib('provider/caldav.js');
-});
+requireLib('models/account.js');
+requireLib('templates/account.js');
+requireLib('presets.js');
+requireLib('views/advanced_settings.js');
+requireLib('provider/caldav.js');
 
 suite('views/advanced_settings', function() {
 

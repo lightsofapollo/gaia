@@ -1,10 +1,8 @@
-requireApp('calendar/test/unit/helper.js', function() {
-  requireLib('ext/uuid.js');
-  requireLib('timespan.js');
-  requireLib('event_mutations.js');
-  requireLib('provider/abstract.js');
-  requireLib('provider/local.js');
-});
+requireLib('ext/uuid.js');
+requireLib('timespan.js');
+requireLib('event_mutations.js');
+requireLib('provider/abstract.js');
+requireLib('provider/local.js');
 
 suite('provider/local', function() {
 

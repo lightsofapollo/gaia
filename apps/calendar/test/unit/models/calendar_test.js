@@ -1,6 +1,4 @@
-requireApp('calendar/test/unit/helper.js', function() {
-  requireLib('models/calendar.js');
-});
+requireLib('models/calendar.js');
 
 suite('models/calendar', function() {
 

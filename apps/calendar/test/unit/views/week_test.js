@@ -1,18 +1,15 @@
 requireCommon('test/synthetic_gestures.js');
-
-requireApp('calendar/test/unit/helper.js', function() {
-  require('/shared/js/gesture_detector.js');
-  requireLib('utils/ordered_map.js');
-  requireLib('timespan.js');
-  requireLib('templates/day.js');
-  requireLib('templates/week.js');
-  requireLib('views/time_parent.js');
-  requireLib('views/day_based.js');
-  requireLib('views/day_child.js');
-  requireLib('views/week_child.js');
-  requireLib('views/day.js');
-  requireLib('views/week.js');
-});
+require('/shared/js/gesture_detector.js');
+requireLib('utils/ordered_map.js');
+requireLib('timespan.js');
+requireLib('templates/day.js');
+requireLib('templates/week.js');
+requireLib('views/time_parent.js');
+requireLib('views/day_based.js');
+requireLib('views/day_child.js');
+requireLib('views/week_child.js');
+requireLib('views/day.js');
+requireLib('views/week.js');
 
 suite('views/week', function() {
   var subject;

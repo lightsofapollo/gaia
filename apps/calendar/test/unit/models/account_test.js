@@ -1,10 +1,8 @@
-requireApp('calendar/test/unit/helper.js', function() {
-  requireLib('provider/calendar/abstract.js');
-  requireLib('provider/calendar/local.js');
-  requireLib('provider/local.js');
+requireLib('provider/calendar/abstract.js');
+requireLib('provider/calendar/local.js');
+requireLib('provider/local.js');
 
-  requireLib('models/account.js');
-});
+requireLib('models/account.js');
 
 suite('account', function() {
   var subject;

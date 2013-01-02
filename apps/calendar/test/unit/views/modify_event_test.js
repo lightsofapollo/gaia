@@ -1,10 +1,8 @@
-requireApp('calendar/test/unit/helper.js', function() {
-  requireLib('utils/input_parser.js');
-  requireLib('views/modify_event.js');
-  requireLib('models/account.js');
-  requireLib('models/calendar.js');
-  requireLib('models/event.js');
-});
+requireLib('utils/input_parser.js');
+requireLib('views/modify_event.js');
+requireLib('models/account.js');
+requireLib('models/calendar.js');
+requireLib('models/event.js');
 
 suite('views/modify_event', function() {
 

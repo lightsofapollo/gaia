@@ -1,10 +1,8 @@
-requireApp('calendar/test/unit/helper.js', function() {
-  requireLib('ext/uuid.js');
-  requireLib('db.js');
-  requireLib('models/account.js');
-  requireLib('models/calendar.js');
-  requireLib('presets.js');
-});
+requireLib('ext/uuid.js');
+requireLib('db.js');
+requireLib('models/account.js');
+requireLib('models/calendar.js');
+requireLib('presets.js');
 
 /*
 // These tests are currently failing and have been temporarily disabled as per

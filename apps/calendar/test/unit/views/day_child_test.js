@@ -1,10 +1,8 @@
-requireApp('calendar/test/unit/helper.js', function() {
-  requireLib('timespan.js');
-  requireLib('utils/ordered_map.js');
-  requireLib('templates/day.js');
-  requireLib('views/day_based.js');
-  requireLib('views/day_child.js');
-});
+requireLib('timespan.js');
+requireLib('utils/ordered_map.js');
+requireLib('templates/day.js');
+requireLib('views/day_based.js');
+requireLib('views/day_child.js');
 
 suite('views/day_child', function() {
   var subject;

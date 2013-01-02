@@ -1,12 +1,9 @@
 requireCommon('test/synthetic_gestures.js');
-requireApp('calendar/test/unit/helper.js', function() {
-  require('/shared/js/gesture_detector.js');
+require('/shared/js/gesture_detector.js');
 
-  requireLib('templates/month.js');
-  requireLib('views/month_child.js');
-  requireLib('timespan.js');
-});
-
+requireLib('templates/month.js');
+requireLib('views/month_child.js');
+requireLib('timespan.js');
 
 suite('views/month_child', function() {
   var subject,

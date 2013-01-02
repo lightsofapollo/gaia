@@ -1,10 +1,8 @@
 requireCommon('test/synthetic_gestures.js');
 
-requireApp('calendar/test/unit/helper.js', function() {
-  requireLib('models/calendar.js');
-  requireLib('templates/calendar.js');
-  requireLib('views/settings.js');
-});
+requireLib('models/calendar.js');
+requireLib('templates/calendar.js');
+requireLib('views/settings.js');
 
 suite('views/settings', function() {
 

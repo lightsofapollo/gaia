@@ -1,11 +1,9 @@
-requireApp('calendar/test/unit/helper.js', function() {
-  requireLib('templates/account.js');
-  requireLib('presets.js');
-  requireLib('provider/local.js');
-  requireLib('models/account.js');
-  requireLib('utils/account_creation.js');
-  requireLib('views/modify_account.js');
-});
+requireLib('templates/account.js');
+requireLib('presets.js');
+requireLib('provider/local.js');
+requireLib('models/account.js');
+requireLib('utils/account_creation.js');
+requireLib('views/modify_account.js');
 
 /*
 // These tests are currently failing and have been temporarily disabled as per

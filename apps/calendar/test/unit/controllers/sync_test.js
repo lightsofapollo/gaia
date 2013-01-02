@@ -1,8 +1,6 @@
-requireApp('calendar/test/unit/helper.js', function() {
-  requireLib('models/calendar.js');
-  requireLib('models/account.js');
-  requireLib('controllers/sync.js');
-});
+requireLib('models/calendar.js');
+requireLib('models/account.js');
+requireLib('controllers/sync.js');
 
 suite('controllers/sync', function() {
 

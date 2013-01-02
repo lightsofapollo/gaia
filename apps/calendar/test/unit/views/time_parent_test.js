@@ -1,9 +1,7 @@
-requireApp('calendar/test/unit/helper.js', function() {
-  require('/shared/js/gesture_detector.js');
-  requireLib('timespan.js');
-  requireLib('utils/ordered_map.js');
-  requireLib('views/time_parent.js');
-});
+require('/shared/js/gesture_detector.js');
+requireLib('timespan.js');
+requireLib('utils/ordered_map.js');
+requireLib('views/time_parent.js');
 
 suite('views/time_parent', function() {
 

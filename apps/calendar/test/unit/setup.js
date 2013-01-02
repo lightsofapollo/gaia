@@ -1,6 +1,5 @@
 (function(window) {
-
-  var oldRequire = require;
+  var oldRequire = window.require;
 
   require = function(path) {
     if (path === 'stream') {
@@ -113,6 +112,7 @@
     }
   };
 
+
   /* global exports */
 
   function requireLib() {
@@ -178,6 +178,7 @@
 
   requireLib('ext/notamd.js');
   requireLib('calendar.js');
+
   requireLib('load_config.js');
   requireLib('calc.js');
   requireLib('set.js');
@@ -215,5 +216,3 @@
   requireSupport('factories/all.js');
 
 }(this));
-
-
