@@ -37,7 +37,7 @@
   window.requireApp = function(url, cb) {
     require(TestUrlResolver.resolve(url), cb);
   };
-  
+
 
   /**
    * require's a file from /common/ resources.
@@ -50,8 +50,8 @@
    */
   window.requireCommon = function(url, cb) {
     require(Common.url('/common/' + url), cb);
-  }
-  
+  };
+
   //template
   requireCommon('test/template.js');
 
@@ -72,6 +72,15 @@
 
   //url utilities
   window.requireCommon('test/test_url_resolver.js');
+
+  /**
+   * Important will not cause failures if missing.
+   * Allows each app to have its own setup.js file that will execute
+   * before any tests are loaded so we can utilize helpers outside
+   * of setup blocks. Any files require from setup.js should also
+   * block loading of any tests...
+   */
+  window.require('/test/unit/setup.js');
 
 }(this));
 
