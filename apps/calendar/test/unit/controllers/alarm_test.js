@@ -1,11 +1,8 @@
 requireApp('calendar/shared/js/notification_helper.js');
-requireLib('models/calendar.js');
-requireLib('models/account.js');
-requireLib('models/event.js');
+//requireLib('models/event.js');
+//requireLib('controllers/alarm.js');
 
-requireLib('controllers/alarm.js');
-
-suite('controllers/alarm', function() {
+suiteGroup('Controllers.Alarm', function() {
 
   var subject;
   var app;

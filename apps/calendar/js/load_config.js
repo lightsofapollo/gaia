@@ -105,6 +105,16 @@ Calendar.LoadConfig = (function() {
     },
 
     group: {
+      'Controllers.Alarm': {
+        storeLoad: [
+          'setting'
+        ],
+
+        js: [
+          'controllers/alarm.js',
+          'models/event.js'
+        ]
+      }
     }
   };
 

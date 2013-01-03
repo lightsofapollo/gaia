@@ -178,8 +178,9 @@
 
   requireLib('ext/notamd.js');
   requireLib('calendar.js');
-
   requireLib('load_config.js');
+  requireApp('calendar/test/unit/loader.js');
+
   requireLib('calc.js');
   requireLib('set.js');
   requireLib('batch.js');
