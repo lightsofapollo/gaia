@@ -1891,6 +1891,47 @@ var WindowManager = (function() {
   window.addEventListener('devicemotion', dumbListener2);
 
   window.setTimeout(function() {
+    var req = navigator.mozApps.mgmt.getAll();
+    req.onsuccess = function(e) {
+      var result = e.target.result;
+      var forceRun = [
+        'gallery',
+        'music'
+      ];
+
+      var i = 0;
+      var len = result.length;
+      var app;
+      var domain;
+
+      function isForceRun(app) {
+        domain = app.manifestURL.split('://')[1];
+
+        return forceRun.some(function(forceApp) {
+          return domain.indexOf(forceApp) === 0
+        });
+      }
+
+
+      for (; i < len; i++) {
+        app = result[i];
+
+        if (isForceRun(app)) {
+          dump('FOO: ' + app.origin + '\n\n');
+          appendFrame(
+            null,
+            app.origin,
+            app.origin + app.manifest.launch_path,
+            app.manifest.name,
+            app.manifest,
+            app.manifestURL
+          );
+        }
+      }
+    };
+  }, 500);
+
+  window.setTimeout(function() {
     window.removeEventListener('devicemotion', dumbListener2);
   }, 2000);
 

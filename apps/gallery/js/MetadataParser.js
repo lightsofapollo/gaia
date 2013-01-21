@@ -27,6 +27,8 @@ var metadataParsers = (function() {
   // thumbnail image as a blob and pass it to the callback.
   // This utility function is used by both the image and video metadata parsers
   function createThumbnailFromElement(elt, video, rotation, callback) {
+    var _start = Date.now();
+
     // Create a thumbnail image
     var canvas = document.createElement('canvas');
     var context = canvas.getContext('2d');
