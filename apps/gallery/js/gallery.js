@@ -3,6 +3,8 @@
 
 'use strict';
 
+dump('-- GALLERY LOADED! ---');
+
 // TODO
 // fix edit mode
 
@@ -273,6 +275,7 @@ function init() {
 // Initialize MediaDB objects for photos and videos, and set up their
 // event handlers.
 function initDB(include_videos) {
+  dump('Gallery INIT DB:\n');
   photodb = new MediaDB('pictures', metadataParsers.imageMetadataParser, {
     mimeTypes: ['image/jpeg', 'image/png'],
     version: 2,
@@ -308,6 +311,7 @@ function initDB(include_videos) {
   };
 
   photodb.onready = function() {
+    dump('PHOTO DB READY\n');
     // Hide the nocard or pluggedin overlay if it is displayed
     if (currentOverlay === 'nocard' || currentOverlay === 'pluggedin')
       showOverlay(null);
@@ -335,8 +339,10 @@ function initDB(include_videos) {
   // When the mediadbs are scanning, let the user know. We count scan starts
   // and ends so we correctly display the throbber while either db is scanning.
   var scanning = 0;
+  var _start = Date.now();
 
   photodb.onscanstart = function onscanstart() {
+    dump('PHOTO DB START SCAN\n');
     scanning++;
     if (scanning == 1) {
       // Show the scanning indicator
@@ -348,6 +354,7 @@ function initDB(include_videos) {
   photodb.onscanend = function onscanend() {
     scanning--;
     if (scanning == 0) {
+      dump('PHOTO DB SCAN END ' + (Date.now() - _start)   + 'ms \n');
       // Hide the scanning indicator
       $('progress').classList.add('hidden');
       $('throbber').classList.remove('throb');
