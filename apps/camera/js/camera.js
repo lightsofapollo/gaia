@@ -1,5 +1,7 @@
 'use strict';
 
+var _startCamera = Date.now();
+
 var Camera = {
   _cameras: null,
   _camera: 0,
@@ -206,7 +208,11 @@ var Camera = {
     this._pictureStorage
       .addEventListener('change', this.deviceStorageChangeHandler.bind(this));
 
+
+    var _start = Date.now();
+
     asyncStorage.getItem(this._dcfConfig.key, (function(value) {
+      dump('[camera] ASYNC READY?:' + (Date.now() - _start) + 'ms');
       if (value) {
         this._dcfConfig.seq = value;
       }
@@ -277,6 +283,8 @@ var Camera = {
       this.viewfinder.play();
       this.enableButtons();
     }
+
+    dump('[camera] Init (2): ' + (Date.now() - _startCamera) + 'ms \n');
     if (this.captureMode === this.CAMERA) {
       this._cameraObj.getPreviewStream(this._previewConfig,
                                        gotPreviewStream.bind(this));
@@ -532,6 +540,7 @@ var Camera = {
     var options = {camera: this._cameras[this._camera]};
 
     function gotPreviewScreen(stream) {
+        dump('[camera] got preview (1): ' + (Date.now() - window._getPreviewStream) + 'ms \n');
       this.enableButtons();
       this._previewActive = true;
       viewfinder.mozSrcObject = stream;
@@ -540,7 +549,10 @@ var Camera = {
       setTimeout(this.initPositionUpdate.bind(this), this.PROMPT_DELAY);
     }
 
+    var _start = Date.now();
+
     function gotCamera(camera) {
+      dump('[camera] get camera: [' + (Date.now() - _start)  + 'ms ]\n');
       this._cameraObj = camera;
       this._config.rotation = rotation;
       this._autoFocusSupported =
@@ -554,7 +566,10 @@ var Camera = {
         }
       }).bind(this);
       camera.onRecorderStateChange = this.recordingStateChanged.bind(this);
+
       if (this.captureMode === this.CAMERA) {
+        window._getPreviewStream = Date.now();
+        dump('[camera] Init (1): ' + (Date.now() - _startCamera) + 'ms \n');
         camera.getPreviewStream(this._previewConfig, gotPreviewScreen.bind(this));
       } else {
         this._previewConfigVideo.rotation = this._phoneOrientation;
