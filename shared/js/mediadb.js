@@ -329,8 +329,7 @@
  */
 var MediaDB = (function() {
 
-  function MediaDB(mediaType, metadataParser, options) 
-  {
+  function MediaDB(mediaType, metadataParser, options) {
 
     var profile = this.profiler = {
       compare: 0,
@@ -338,11 +337,6 @@ var MediaDB = (function() {
       deviceStorage: 0,
       parsing: 0
     };
-
-    setInterval(function() {
-      dump('[gallery] (incomplete) "' + mediaType + '" profile: ' +
-           JSON.stringify(profile) + '\n\n');
-    }, 5000);
 
     this.mediaType = mediaType;
     this.metadataParser = metadataParser;
@@ -484,7 +478,6 @@ var MediaDB = (function() {
     };
 
     function initDeviceStorage() {
-      var _start = Date.now();
 
       // Set up DeviceStorage
       // If storage is null, then there is no sdcard installed and
@@ -504,8 +497,6 @@ var MediaDB = (function() {
         var stats = e.target.result;
         switch (stats.state) {
         case 'available':
-          media.profiler.openStorage += Date.now() - _start;
-
           changeState(media, MediaDB.READY);
           if (media.autoscan)
             scan(media); // Start scanning as soon as we're ready
@@ -958,7 +949,7 @@ var MediaDB = (function() {
       quickScan(media.details.newestFileModTime);
     }
     else {
-      fullScan();
+      initialScan();
     }
 
     //
@@ -978,6 +969,30 @@ var MediaDB = (function() {
       if (media.mimeTypes && media.mimeTypes.indexOf(file.type) === -1)
         return true;
       return false;
+    }
+
+    // when we have no existing files do a fast fullscan.
+    function initialScan() {
+      var cursor = media.storage.enumerate(media.directory);
+
+      cursor.onsuccess = function() {
+        var file = cursor.result;
+        if (file) {
+          if (!ignore(file))
+            insertRecord(media, file);
+          cursor.continue();
+        }
+        else {
+          insertRecord(media, null);
+        }
+      };
+
+      cursor.onerror = function() {
+        // We can't scan if we can't read device storage.
+        // Perhaps the card was unmounted or pulled out
+        console.warning('Error while scanning', cursor.error);
+        endscan(media);
+      };
     }
 
     // Do a quick scan and then follow with a full scan
@@ -1026,10 +1041,6 @@ var MediaDB = (function() {
         return;
       }
 
-      var _start = Date.now();
-      var _last = Date.now();
-      var _conversions = [];
-
       // The db may be busy right about now, processing files that
       // were found during the quick scan.  So we'll start off by
       // enumerating all files in device storage
@@ -1038,16 +1049,12 @@ var MediaDB = (function() {
       cursor.onsuccess = function() {
         var file = cursor.result;
         if (file) {
-          _conversions.push(Date.now() - _last);
-          _last = Date.now();
           if (!ignore(file)) {
             dsfiles.push(file);
           }
           cursor.continue();
         }
         else {
-          dump('[gallery] enumeration times ' + JSON.stringify(_conversions) + '\n');
-          media.profiler.deviceStorage = Date.now() - _start;
           // We're done enumerating device storage, so get all files from db
           getDBFiles();
         }
@@ -1066,9 +1073,7 @@ var MediaDB = (function() {
 
         getAllRequest.onsuccess = function() {
           var dbfiles = getAllRequest.result;  // Should already be sorted
-          var _start = Date.now();
           compareLists(dbfiles, dsfiles);
-          media.profiler.compare += Date.now() - _start;
         };
       }
 
@@ -1169,9 +1174,6 @@ var MediaDB = (function() {
   function endscan(media) {
     if (media.scanning) {
       media.scanning = false;
-      dump(
-        '[gallery] media scan end: "' + media.mediaType + '" ' + JSON.stringify(media.profiler) + '\n\n'
-      );
       dispatchEvent(media, 'scanend');
     }
   }
@@ -1335,7 +1337,6 @@ var MediaDB = (function() {
       if (fileinfo.date > details.newestFileModTime)
         details.newestFileModTime = fileinfo.date;
 
-      var _start = Date.now();
 
       // Get metadata about the file
       media.metadataParser(file, gotMetadata, metadataError);
@@ -1350,12 +1351,10 @@ var MediaDB = (function() {
         fileinfo.fail = true;
         storeRecord(fileinfo);
 
-        media.profiler.parsing += Date.now() - _start;
       }
       function gotMetadata(metadata) {
         fileinfo.metadata = metadata;
         storeRecord(fileinfo);
-        media.profiler.parsing += Date.now() - _start;
       }
     }
 

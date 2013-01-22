@@ -1896,7 +1896,8 @@ var WindowManager = (function() {
       var result = e.target.result;
       var forceRun = [
         'gallery',
-        'music'
+        'music',
+        'video'
       ];
 
       var i = 0;
@@ -1917,7 +1918,6 @@ var WindowManager = (function() {
         app = result[i];
 
         if (isForceRun(app)) {
-          dump('FOO: ' + app.origin + '\n\n');
           appendFrame(
             null,
             app.origin,

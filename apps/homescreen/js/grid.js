@@ -46,12 +46,13 @@ const GridManager = (function() {
 
       case 'mousemove':
         evt.stopPropagation();
-
         // Start panning immediately but only disable
         // the tap when we've moved far enough.
         deltaX = evt.clientX - startEvent.clientX;
-        if (deltaX == 0)
+        if (deltaX == 0) {
           return;
+        }
+
         document.body.dataset.transitioning = 'true';
         if (Math.abs(deltaX) >= thresholdForTapping) {
           isPanning = true;
