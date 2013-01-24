@@ -1,0 +1,64 @@
+{
+  "name": "Hack",
+  "description": "Web app template",
+  "type": "certified",
+  "launch_path": "/index.html",
+  "developer": {
+    "name": "The Gaia Team",
+    "url": "https://github.com/mozilla-b2g/gaia"
+  },
+  "permissions": {
+    "contacts": { "access": "readwrite" }
+  },
+  "locales": {
+    "ar": {
+      "name": "Hack",
+      "description": "Web app template"
+    },
+    "de": {
+      "name": "Hack",
+      "description": "Web app template"
+    },
+    "el": {
+      "name": "Hack",
+      "description": "Web app template"
+    },
+    "en-US": {
+      "name": "Hack",
+      "description": "Web app template"
+    },
+    "es": {
+      "name": "Hack",
+      "description": "Web app template"
+    },
+    "fr": {
+      "name": "Hack",
+      "description": "Web app template"
+    },
+    "it": {
+      "name": "Hack",
+      "description": "Web app template"
+    },
+    "pt-BR": {
+      "name": "Hack",
+      "description": "Web app template"
+    },
+    "ru": {
+      "name": "Hack",
+      "description": "Web app template"
+    },
+    "tr": {
+      "name": "Hack",
+      "description": "Web app template"
+    },
+    "zh-TW": {
+      "name": "Hack",
+      "description": "Web app template"
+    }
+  },
+  "default_locale": "en-US",
+  "icons": {
+    "128": "/style/icons/Blank.png"
+  }
+}
+
