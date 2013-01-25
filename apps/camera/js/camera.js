@@ -1,5 +1,7 @@
 'use strict';
 
+dump('[camera] I LOAD CAMERA: ' + (Date.now() - window._startCamera) + ' \n');
+
 var Camera = {
   _cameras: null,
   _camera: 0,
@@ -512,6 +514,7 @@ var Camera = {
 
   setSource: function camera_setSource(camera) {
 
+
     this.viewfinder.mozSrcObject = null;
     this._timeoutId = 0;
 
@@ -537,9 +540,6 @@ var Camera = {
     style.MozTransform = transform;
     style.width = width + 'px';
     style.height = height + 'px';
-
-    this._cameras = navigator.mozCameras.getListOfCameras();
-    var options = {camera: this._cameras[this._camera]};
 
     function gotPreviewScreen(stream) {
       this.enableButtons();
@@ -576,10 +576,11 @@ var Camera = {
     // If there is already a camera, we would have to release it first.
     if (this._cameraObj) {
       this.release(function camera_release_callback() {
-        navigator.mozCameras.getCamera(options, gotCamera.bind(this));
+        Camera._cameras =
+          CameraHardware.get(this._camera, gotCamera.bind(this));
       });
     } else {
-      navigator.mozCameras.getCamera(options, gotCamera.bind(this));
+      Camera._cameras = CameraHardware.get(this._camera, gotCamera.bind(this));
     }
   },
 
