@@ -173,26 +173,31 @@
   l10nLink('/locales/locales.ini');
   l10nLink('/shared/locales/date.ini');
 
-  requireApp('calendar/shared/js/l10n.js');
+  // setup localization....
+  requireApp('calendar/shared/js/l10n.js', function() {
+    // Massive hack to trick l10n to load... (TODO: upstream a fix to l10n.js)
+    document.dispatchEvent(new Event('DOMContentLoaded'));
+
+    suiteSetup(function(done) {
+      var links = Array.slice(document.querySelectorAll('link'));
+
+      var state = navigator.mozL10n.readyState;
+      if (state !== 'complete' && state !== 'interactive') {
+        window.addEventListener('localized', function() {
+          done();
+        });
+      } else {
+        done();
+      }
+    });
+  });
+
   requireApp('calendar/shared/js/l10n_date.js');
 
   requireLib('ext/notamd.js');
   requireLib('calendar.js');
   requireLib('load_config.js');
   requireApp('calendar/test/unit/loader.js');
-
-  /*
-  requireLib('set.js');
-  requireLib('batch.js');
-  requireLib('template.js');
-  requireLib('responder.js');
-  requireLib('utils/overlap.js');
-  requireLib('provider/abstract.js');
-  requireLib('provider/local.js');
-  requireLib('store/abstract.js');
-  requireLib('event_mutations.js');
- */
-
   requireLib('responder.js');
   requireLib('calc.js');
   requireLib('view.js');
@@ -220,5 +225,8 @@
   requireSupport('fake_page.js');
   requireSupport('factory.js');
   requireSupport('factories/all.js');
+
+  // tell mocha its here..
+  window.uuid = null;
 
 }(this));

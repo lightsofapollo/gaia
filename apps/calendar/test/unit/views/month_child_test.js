@@ -1,11 +1,13 @@
 requireCommon('test/synthetic_gestures.js');
 require('/shared/js/gesture_detector.js');
-
-requireLib('templates/month.js');
-requireLib('views/month_child.js');
 requireLib('timespan.js');
 
-suite('views/month_child', function() {
+/*
+requireLib('templates/month.js');
+requireLib('views/month_child.js');
+*/
+
+suiteGroup('Views.MonthChild', function() {
   var subject,
       controller,
       busytimes,

@@ -106,6 +106,75 @@ Calendar.LoadConfig = (function() {
 
     group: {
 
+      'Views.Week': {
+        group: [
+          'Views.WeekChild',
+          'Views.Day',
+          'Templates.Week'
+        ],
+
+        js: [
+          'views/week'
+        ]
+      },
+
+      'Views.WeekChild': {
+        group: [
+          'Templates.Week',
+          'Views.DayBased'
+        ],
+
+        js: [
+          'views/week_child'
+        ]
+      },
+
+      'Views.TimeHeader': {
+        js: [
+          'view',
+          'views/time_header'
+        ]
+      },
+
+      'Views.Settings': {
+        group: ['Templates.Calendar'],
+
+        js: [
+          'view',
+          'views/settings'
+        ]
+      },
+
+      'Views.MonthsDay': {
+        group: ['Views.DayChild'],
+        js: [
+          'views/months_day'
+        ]
+      },
+
+      'Views.Month': {
+        group: [
+          'Views.MonthChild',
+          'Templates.Month',
+          'Views.TimeParent'
+        ],
+
+        js: [
+          'views/month'
+        ]
+      },
+
+      'Views.MonthChild': {
+        group: [
+          'Templates.Month'
+        ],
+
+        js: [
+          'calc',
+          'views/month_child'
+        ]
+      },
+
       'Views.ModifyEvent': {
         group: ['Models.Event'],
 
@@ -214,6 +283,9 @@ Calendar.LoadConfig = (function() {
       },
 
       'Templates.Calendar': {
+        // this is lame
+        group: ['Provider.Local'],
+
         js: [
           'template',
           'templates/calendar'
@@ -265,14 +337,29 @@ Calendar.LoadConfig = (function() {
         ]
       },
 
-      'Controllers.Alarm': {
-        storeLoad: [
-          'setting'
-        ],
-
+      'Controllers.RecurringEvents': {
         js: [
-          'controllers/alarm',
-          'models/events'
+          'controllers/recurring_events'
+        ]
+      },
+
+      'Controllers.Sync': {
+        js: [
+          'controllers/sync'
+        ]
+      },
+
+      'Controllers.Service': {
+        js: [
+          'worker/manager',
+          'controllers/service'
+        ]
+      },
+
+      'Controllers.Alarm': {
+        group: ['Models.Event'],
+        js: [
+          'controllers/alarm'
         ]
       }
     }

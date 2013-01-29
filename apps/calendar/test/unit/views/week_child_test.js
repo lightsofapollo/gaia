@@ -1,11 +1,14 @@
-requireLib('timespan.js');
+/*
 requireLib('utils/ordered_map.js');
 requireLib('templates/day.js');
 requireLib('templates/week.js');
 requireLib('views/day_based.js');
 requireLib('views/week_child.js');
+*/
 
-suite('views/week_child', function() {
+requireLib('timespan.js');
+
+suiteGroup('Views.WeekChild', function() {
   var subject;
   var app;
   var controller;

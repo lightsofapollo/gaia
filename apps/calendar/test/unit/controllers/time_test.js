@@ -3,7 +3,7 @@ requireLib('interval_tree.js');
 
 window.page = window.page || {};
 
-suite('controllers/time', function() {
+suite('Controllers.Time', function() {
   var subject;
   var app;
   var busytimeStore;

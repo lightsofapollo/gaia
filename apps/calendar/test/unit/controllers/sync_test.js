@@ -1,8 +1,7 @@
 requireLib('models/calendar.js');
 requireLib('models/account.js');
-requireLib('controllers/sync.js');
 
-suite('controllers/sync', function() {
+suiteGroup('Controllers.Sync', function() {
 
   var account;
   var calendar;
