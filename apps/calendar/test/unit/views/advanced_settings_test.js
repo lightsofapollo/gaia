@@ -1,10 +1,10 @@
 requireLib('models/account.js');
-requireLib('templates/account.js');
 requireLib('presets.js');
-requireLib('views/advanced_settings.js');
+requireLib('provider/abstract.js');
+requireLib('provider/local.js');
 requireLib('provider/caldav.js');
 
-suite('views/advanced_settings', function() {
+suiteGroup('Views.AdvancedSettings', function() {
 
   var subject;
   var template;

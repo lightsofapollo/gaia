@@ -1,9 +1,7 @@
 require('/shared/js/gesture_detector.js');
 requireLib('timespan.js');
-requireLib('utils/ordered_map.js');
-requireLib('views/time_parent.js');
 
-suite('views/time_parent', function() {
+suiteGroup('Views.TimeParent', function() {
 
   var testEl;
   var viewDate = new Date(2012, 1, 15);

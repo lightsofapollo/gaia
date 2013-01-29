@@ -106,6 +106,92 @@ Calendar.LoadConfig = (function() {
 
     group: {
 
+      'Views.ModifyEvent': {
+        group: ['Models.Event'],
+
+        js: [
+          'utils/input_parser',
+          'views/modify_event'
+        ]
+      },
+
+      'Views.ModifyAccount': {
+        js: [
+          'view',
+          'presets',
+          'utils/account_creation',
+          'models/account',
+          'views/modify_account'
+        ]
+      },
+
+      'Views.Errors': {
+        js: ['view', 'views/errors']
+      },
+
+      'Views.Day': {
+        group: [
+          'Views.TimeParent',
+          'Views.DayChild'
+        ],
+
+        js: [
+          'views/day'
+        ]
+      },
+
+      'Views.DayChild': {
+        group: ['Views.DayBased'],
+
+        js: [
+          'views/day_child'
+        ]
+      },
+
+      'Views.DayBased': {
+        group: ['Templates.Day'],
+
+        js: [
+          'calc',
+          'utils/ordered_map',
+          'utils/overlap',
+          'view',
+          'views/day_based'
+        ]
+      },
+
+      'Views.TimeParent': {
+        js: [
+          'view',
+          'utils/ordered_map',
+          'views/time_parent'
+        ]
+      },
+
+      'Views.CreateAccount': {
+        group: ['Templates.Account'],
+
+        js: [
+          'views/create_account'
+        ]
+      },
+
+      'Views.CalendarColors': {
+        js: [
+          'view',
+          'models/calendar',
+          'views/calendar_colors'
+        ]
+      },
+
+      'Views.AdvancedSettings': {
+        group: ['Templates.Account'],
+
+        js: [
+          'views/advanced_settings'
+        ]
+      },
+
       'Templates.Week': {
         js: [
           'template',
