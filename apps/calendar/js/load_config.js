@@ -105,14 +105,88 @@ Calendar.LoadConfig = (function() {
     },
 
     group: {
+
+      'Templates.Week': {
+        js: [
+          'template',
+          'templates/week'
+        ]
+      },
+
+      'Templates.Month': {
+        js: [
+          'template',
+          'templates/month'
+        ]
+      },
+
+      'Templates.Day': {
+        js: [
+          'template',
+          'templates/day'
+        ]
+      },
+
+      'Templates.Calendar': {
+        js: [
+          'template',
+          'templates/calendar'
+        ]
+      },
+
+      'Templates.Account': {
+        js: [
+          'template',
+          'templates/account'
+        ]
+      },
+
+
+      'Provider.Local': {
+        js: [
+          'ext/uuid',
+          'provider/abstract',
+          'provider/local',
+          'event_mutations'
+        ]
+      },
+
+      'Provider.CaldavPullEvents': {
+        js: ['provider/caldav_pull_events']
+      },
+
+      'Provider.Caldav': {
+        js: [
+          'provider/abstract',
+          'provider/caldav',
+          'provider/caldav_pull_events'
+        ]
+      },
+
+      'Models.Account': {
+        js: [
+          'models/account'
+        ]
+      },
+
+      'Models.Event': {
+        js: ['models/event']
+      },
+
+      'Models.Calendar': {
+        js: [
+          'models/calendar'
+        ]
+      },
+
       'Controllers.Alarm': {
         storeLoad: [
           'setting'
         ],
 
         js: [
-          'controllers/alarm.js',
-          'models/event.js'
+          'controllers/alarm',
+          'models/events'
         ]
       }
     }

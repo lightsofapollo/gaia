@@ -1,7 +1,4 @@
-requireLib('template.js');
-requireLib('templates/week.js');
-
-suite('templates/week', function() {
+suiteGroup('Templates.Week', function() {
   var subject;
 
   suiteSetup(function() {

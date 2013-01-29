@@ -181,32 +181,37 @@
   requireLib('load_config.js');
   requireApp('calendar/test/unit/loader.js');
 
-  requireLib('calc.js');
+  /*
   requireLib('set.js');
   requireLib('batch.js');
   requireLib('template.js');
-  requireLib('interval_tree.js');
   requireLib('responder.js');
   requireLib('utils/overlap.js');
-  requireLib('time_observer.js');
   requireLib('provider/abstract.js');
   requireLib('provider/local.js');
   requireLib('store/abstract.js');
-  requireLib('store/account.js');
+  requireLib('event_mutations.js');
+ */
+
+  requireLib('responder.js');
+  requireLib('calc.js');
+  requireLib('view.js');
+  requireLib('router.js');
+  requireLib('interval_tree.js');
+  requireLib('time_observer.js');
+  requireLib('store/abstract.js');
   requireLib('store/busytime.js');
+  requireLib('store/account.js');
   requireLib('store/calendar.js');
   requireLib('store/event.js');
   requireLib('store/ical_component.js');
-  requireLib('store/setting.js');
-  requireLib('store/alarm.js');
-  requireLib('event_mutations.js');
-  requireLib('view.js');
-  requireLib('router.js');
-  requireLib('controllers/alarm.js');
-  requireLib('controllers/time.js');
-  requireLib('controllers/sync.js');
   requireLib('worker/manager.js');
   requireLib('controllers/service.js');
+  requireLib('controllers/time.js');
+  requireLib('controllers/sync.js');
+  requireLib('controllers/alarm.js');
+  requireLib('store/setting.js');
+  requireLib('store/alarm.js');
   requireLib('db.js');
   requireLib('app.js');
 

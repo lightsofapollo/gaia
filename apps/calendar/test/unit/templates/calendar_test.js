@@ -1,7 +1,7 @@
-requireLib('template.js');
-requireLib('templates/calendar.js');
+requireLib('provider/abstract.js');
+requireLib('provider/local.js');
 
-suite('templates/calendar', function() {
+suiteGroup('Templates.Calendar', function() {
   var subject;
 
   suiteSetup(function() {

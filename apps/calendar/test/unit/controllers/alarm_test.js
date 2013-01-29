@@ -1,6 +1,4 @@
 requireApp('calendar/shared/js/notification_helper.js');
-//requireLib('models/event.js');
-//requireLib('controllers/alarm.js');
 
 suiteGroup('Controllers.Alarm', function() {
 
@@ -17,7 +15,6 @@ suiteGroup('Controllers.Alarm', function() {
 
   setup(function(done) {
     this.timeout(10000);
-
     app = testSupport.calendar.app();
     db = app.db;
     subject = new Calendar.Controllers.Alarm(app);

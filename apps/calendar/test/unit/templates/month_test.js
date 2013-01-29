@@ -1,7 +1,4 @@
-requireLib('template.js');
-requireLib('templates/month.js');
-
-suite('templates/month', function() {
+suiteGroup('Templates.Month', function() {
   var subject;
 
   suiteSetup(function() {

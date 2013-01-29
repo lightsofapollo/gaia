@@ -107,11 +107,11 @@
     if (!(this instanceof Factory))
       return new Factory(config);
 
-    this._plugins = Object.create(defaultPlugins);
+    this.plugins = Object.create(defaultPlugins);
 
     if (config.plugins) {
       for (var key in config.plugins) {
-        this._plugins[key] = config.plugins[key];
+        this.plugins[key] = config.plugins[key];
       }
     }
 
@@ -146,7 +146,7 @@
         name = id;
       }
 
-      var pluginFn = this._plugins[plugin];
+      var pluginFn = this.plugins[plugin];
 
       if (!pluginFn || 'function' !== typeof pluginFn) {
         throw new Error('plugin for :"' + plugin + '" not in config');

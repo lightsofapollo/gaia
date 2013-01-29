@@ -1,11 +1,10 @@
+requireLib('ext/ical.js');
+requireApp('calendar/test/unit/service/helper.js');
 requireApp('calendar/test/unit/provider/mock_stream.js');
-requireLib('provider/caldav_pull_events.js');
-requireLib('provider/abstract.js');
-requireLib('provider/caldav.js');
 requireLib('models/account.js');
 requireLib('models/calendar.js');
 
-suite('provider/caldav', function() {
+suiteGroup('Provider.Caldav', function() {
 
   var subject;
   var app;

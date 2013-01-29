@@ -1,7 +1,7 @@
 requireLib('worker/manager.js');
 requireLib('controllers/service.js');
 
-suite('controllers/service', function() {
+suiteGroup('controllers/service', function() {
 
   var account;
   var calendar;
