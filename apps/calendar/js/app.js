@@ -233,7 +233,7 @@ Calendar.App = (function(window) {
       this.timeController = new Calendar.Controllers.Time(this);
       this.syncController = new Calendar.Controllers.Sync(this);
       this.serviceController = new Calendar.Controllers.Service(this);
-      this.alarmController = new Calendar.Controllers.Alarm(this);
+      //this.alarmController = new Calendar.Controllers.Alarm(this);
 
       // observe sync events
       this.observePendingObject(this.syncController);
@@ -372,7 +372,7 @@ Calendar.App = (function(window) {
       this.observeDateLocalization();
 
       this.timeController.observe();
-      this.alarmController.observe();
+      //this.alarmController.observe();
 
       // turn on the auto queue this means that when
       // alarms are added to the database we manage them

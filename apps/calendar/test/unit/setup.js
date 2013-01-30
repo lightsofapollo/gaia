@@ -209,6 +209,7 @@
   requireLib('store/account.js');
   requireLib('store/calendar.js');
   requireLib('store/event.js');
+  requireLib('store/setting.js');
   requireLib('store/ical_component.js');
   requireLib('worker/manager.js');
   requireLib('controllers/service.js');
