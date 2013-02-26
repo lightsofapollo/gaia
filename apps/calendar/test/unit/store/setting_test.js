@@ -91,8 +91,12 @@ suite('store/setting', function() {
 
       test('after set', function(done) {
         subject.getValue('syncFrequency', function(err, value) {
-          done(function() {
-            assert.equal(value, 200);
+          // test cached version
+          subject.getValue('syncFrequency', function(err, cachedValue) {
+            done(function() {
+              assert.equal(value, 200, 'returns correct value');
+              assert.equal(value, cachedValue, 'cached value is equal');
+            });
           });
         });
       });

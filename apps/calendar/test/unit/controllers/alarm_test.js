@@ -70,13 +70,20 @@ suiteGroup('Controllers.Alarm', function() {
       };
 
       realAlarmApi = navigator.mozAlarms;
-      navigator.mozAlarms = {
+
+      var mockAlarms = navigator.mozAlarms = {
         add: function(endTime, _, data) {
           if (data && data.type === 'sync')
             currentAlarmTime = endTime;
 
+          if (mockAlarms.onadd)
+            Calendar.nextTick(function() {
+              mockAlarms.onadd();
+            });
+
           return mockRequest;
         },
+
         remove: function(id) {
           removed = id;
           currentAlarmTime = null;
@@ -336,16 +343,94 @@ suiteGroup('Controllers.Alarm', function() {
         });
       }
 
-      test('initial alarms', function(done) {
-        sendId(1);
+      function willChangeAlarmId(newId, done) {
+        navigator.mozAlarms.onadd = function() {
+          settingStore.getValue('syncAlarm', function(err, value) {
+            done(function() {
+              assert.equal(value.alarmId, newId, 'changes alarm id');
+            });
+          });
+        };
+      }
 
+      // get initial frequency
+      var initialFreq;
+      setup(function(done) {
+        settingStore.getValue('syncFrequency', function(err, freq) {
+          initialFreq = freq;
+          done();
+        });
+      });
+
+      // send initial alarm
+      var initialAlarmId = 1;
+      setup(function(done) {
+        navigator.mozAlarms.onadd = function() {
+          sendId(initialAlarmId);
+          done();
+        };
+      });
+
+      test('initial alarms', function(done) {
         settingStore.getValue('syncAlarm', function(err, value) {
           done(function() {
-            console.log(value);
+            assert.equal(
+              value.alarmId,
+              initialAlarmId,
+              'saves alarm reference'
+            );
+
+            // calculate duration
+            var duration = (
+              (value.end.valueOf() - value.start.valueOf()) / 1000 / 60
+            );
+
+            assert.equal(
+              // we don't care about seconds much its likely test drift.
+              Math.ceil(duration),
+              initialFreq,
+              'sets correct duration'
+            );
           });
         });
       });
 
+      test('remove alarm by changing syncFrequency', function(done) {
+        settingStore.set('syncFrequency', null);
+        assert.equal(removed, initialAlarmId, 'removes alarm from mozAlarms');
+
+        settingStore.getValue('syncAlarm', function(err, value) {
+          done(function() {
+            assert.hasProperties(value, {
+              alarmId: null,
+              end: null,
+              start: null
+            });
+          });
+        });
+      });
+
+      test('setting sync to +15 minutes', function(done) {
+        var newAlarmId = 2;
+        var newFreq = initialFreq + 15;
+
+        // async assertion that alarm id will change
+        willChangeAlarmId(2, done);
+        settingStore.set('syncFrequency', newFreq);
+
+        // verify new alarm was set with right date
+        var difference = Math.round(
+          (currentAlarmTime - new Date()) / 1000 / 60
+        );
+
+        assert.equal(difference, newFreq);
+        sendId(2);
+
+        assert.equal(
+          removed, initialAlarmId,
+          'removes previous alarm on change'
+        );
+      });
     });
 
     return;
@@ -360,18 +445,6 @@ suiteGroup('Controllers.Alarm', function() {
 
       currentAlarmTime = null;
       removed = null;
-
-      // Test setting manual sync
-      settingStore.set('syncFrequency', null);
-      assert.equal(currentAlarmTime, null);
-      assert.equal(removed, null);
-
-      // Test setting sync to 30 minutes
-      settingStore.set('syncFrequency', 30);
-      var difference = Math.round((currentAlarmTime - new Date()) / 1000 / 60); // Approximately how many minutes?
-      assert.equal(difference, 30);
-      sendId(1);
-      assert.equal(removed, null);
 
       // Test setting sync to 15 minutes
       settingStore.set('syncFrequency', 15);

@@ -28,13 +28,24 @@ Calendar.ns('Controllers').Alarm = (function() {
           console.error('Calendar failed to get _nextPeriodicSync!!!');
         }
 
+        // save current sync reference
         self._nextPeriodicSync = result;
         settings.on('syncFrequencyChange', self);
 
-        if (!result.alarmId && result.alarmId !== 0)
-          self._resetSyncAlarm(result, false);
+        // request sync frequency
+        settings.getValue('syncFrequency', getSyncFrequency);
       };
 
+      function getSyncFrequency(err, result) {
+        if (err) {
+          console.error('Calender failed to get sync frequency!!');
+        }
+
+        // setup sync rules based on frequency and cached alarm value.
+        self._resetSyncAlarm(result, false);
+      }
+
+      // begin process of determining if sync is required.
       settings.getValue('syncAlarm', getNextSync);
 
       if (navigator.mozSetMessageHandler) {
@@ -176,16 +187,25 @@ Calendar.ns('Controllers').Alarm = (function() {
      */
     _resetSyncAlarm: function(duration, triggered) {
       var settings = this.app.store('Setting');
+
       if (this._nextPeriodicSync.alarmId) {
+        // remove past alarms we are about to create one anyway.
         navigator.mozAlarms.remove(this._nextPeriodicSync.alarmId);
         this._nextPeriodicSync.alarmId = null;
       }
 
+      // since sync frequency is null (disabled) stop.
       if (duration === null) {
+        // clear previous alarm details
+        this._nextPeriodicSync.start = null;
+        this._nextPeriodicSync.end = null;
+
         settings.set('syncAlarm', this._nextPeriodicSync);
         return;
       }
-      duration *= 60 * 1000; // Convert minutes to milliseconds
+
+       // Convert minutes to milliseconds
+      duration *= 60 * 1000;
 
       var start = new Date();
       var end = new Date(start.getTime() + duration);
@@ -193,8 +213,9 @@ Calendar.ns('Controllers').Alarm = (function() {
       // We're resetting the sync alarm after a settings
       // change and times are still in range
       if (
-        !triggered && this._nextPeriodicSync.end > start &&
-        this._nextPeriodicSync.start.getTime() + duration > start
+        !triggered &&
+        this._nextPeriodicSync.end > start &&
+        (this._nextPeriodicSync.start.getTime() + duration) > start
       ) {
         start = this._nextPeriodicSync.start;
         end = new Date(start.getTime() + duration);
@@ -203,7 +224,6 @@ Calendar.ns('Controllers').Alarm = (function() {
       var request = navigator.mozAlarms.add(end, 'ignoreTimezone', {
         type: 'sync'
       });
-
 
       var self = this;
       request.onsuccess = function(e) {

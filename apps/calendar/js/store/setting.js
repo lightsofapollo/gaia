@@ -49,8 +49,11 @@ Calendar.ns('Store').Setting = (function() {
 
       if (key in this.cached) {
         Calendar.nextTick(function handleCached() {
-          callback(null, this.cached[key].value);
+          callback(null, self.cached[key].value);
         });
+
+        // we have cached value exit...
+        return;
       }
 
       this.get(key, function handleStored(err, value) {
