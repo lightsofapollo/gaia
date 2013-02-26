@@ -5,7 +5,6 @@ Calendar.ns('Controllers').Alarm = (function() {
   function Alarm(app) {
     this.app = app;
     this.store = app.store('Alarm');
-    this.settings = app.store('Setting');
   }
 
   Alarm.prototype = {
@@ -13,6 +12,7 @@ Calendar.ns('Controllers').Alarm = (function() {
     displayURL: '/alarm-display/',
 
     observe: function() {
+      var settings = this.app.store('Setting');
       var self = this;
 
       this._wifiLock = null;
@@ -23,10 +23,19 @@ Calendar.ns('Controllers').Alarm = (function() {
         }
       });
 
-      this._nextPeriodicSync = this.settings.syncAlarm;
+      function getNextSync(err, result) {
+        if (err) {
+          console.error('Calendar failed to get _nextPeriodicSync!!!');
+        }
 
-      if (this._nextPeriodicSync.alarmId === null)
-        this._resetSyncAlarm(false);
+        self._nextPeriodicSync = result;
+        settings.on('syncFrequencyChange', self);
+
+        if (!result.alarmId && result.alarmId !== 0)
+          self._resetSyncAlarm(result, false);
+      };
+
+      settings.getValue('syncAlarm', getNextSync);
 
       if (navigator.mozSetMessageHandler) {
         debug('set message handler');
@@ -36,10 +45,21 @@ Calendar.ns('Controllers').Alarm = (function() {
       } else {
         debug('mozSetMessageHandler is mising!');
       }
+    },
 
-      this.settings.on('syncFrequencyChange', function() {
-        self._resetSyncAlarm(false);
-      });
+    unobserve: function() {
+      this.app.store('Setting').removeEventListener(
+        'syncFrequencyChange',
+        this
+      );
+    },
+
+    handleEvent: function(event) {
+      switch (event.type) {
+        case 'syncFrequencyChange':
+          this._resetSyncAlarm(event.data[0], false);
+          break;
+      }
     },
 
     handleAlarmMessage: function(message) {
@@ -79,15 +99,13 @@ Calendar.ns('Controllers').Alarm = (function() {
         var app = e.target.result;
         var icon = (app) ? NotificationHelper.getIconURI(app) : '';
         var notification = NotificationHelper.send(
-          title,
-          description,
-          icon,
-          function() {
-            show();
-            if (app)
-              app.launch();
-          }
-        );
+        title,
+        description,
+        icon,
+        function() {
+          show();
+          if (app) app.launch();
+        });
       };
     },
 
@@ -112,9 +130,7 @@ Calendar.ns('Controllers').Alarm = (function() {
       var self = this;
 
       if (!trans) {
-        trans = eventStore.db.transaction(
-          ['events', 'busytimes', 'alarms']
-        );
+        trans = eventStore.db.transaction(['events', 'busytimes', 'alarms']);
       }
 
       var event;
@@ -158,15 +174,15 @@ Calendar.ns('Controllers').Alarm = (function() {
      *
      * @param {Boolean} triggered indicates that the alarm fired.
      */
-    _resetSyncAlarm: function(triggered) {
+    _resetSyncAlarm: function(duration, triggered) {
+      var settings = this.app.store('Setting');
       if (this._nextPeriodicSync.alarmId) {
         navigator.mozAlarms.remove(this._nextPeriodicSync.alarmId);
         this._nextPeriodicSync.alarmId = null;
       }
 
-      var duration = this.settings.syncFrequency;
       if (duration === null) {
-        this.settings.set('syncAlarm', this._nextPeriodicSync);
+        settings.set('syncAlarm', this._nextPeriodicSync);
         return;
       }
       duration *= 60 * 1000; // Convert minutes to milliseconds
@@ -176,23 +192,25 @@ Calendar.ns('Controllers').Alarm = (function() {
 
       // We're resetting the sync alarm after a settings
       // change and times are still in range
-      if (!triggered &&
-          this._nextPeriodicSync.end > start &&
-          this._nextPeriodicSync.start.getTime() + duration > start) {
+      if (
+        !triggered && this._nextPeriodicSync.end > start &&
+        this._nextPeriodicSync.start.getTime() + duration > start
+      ) {
         start = this._nextPeriodicSync.start;
         end = new Date(start.getTime() + duration);
       }
 
-      var request = navigator.mozAlarms.add(
-        end, 'ignoreTimezone', {type: 'sync'}
-      );
+      var request = navigator.mozAlarms.add(end, 'ignoreTimezone', {
+        type: 'sync'
+      });
+
 
       var self = this;
       request.onsuccess = function(e) {
         self._nextPeriodicSync.alarmId = e.target.result;
         self._nextPeriodicSync.start = start;
         self._nextPeriodicSync.end = end;
-        self.settings.set('syncAlarm', self._nextPeriodicSync);
+        settings.set('syncAlarm', self._nextPeriodicSync);
       };
       request.onerror = function(e) {
         debug('Error setting alarm:', e.target.error.name);

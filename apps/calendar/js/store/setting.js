@@ -25,6 +25,10 @@ Calendar.ns('Store').Setting = (function() {
     _addToCache: function() {},
     _removeFromCache: function() {},
 
+    _parseId: function(id) {
+      return id;
+    },
+
     /**
      * This method also will use the internal cache to ensure
      * callers are in a consistent state and don't require round
@@ -101,7 +105,7 @@ Calendar.ns('Store').Setting = (function() {
       var cached = this.cached[key];
       var record;
 
-      if (cached) {
+      if (cached && cached._id) {
         cached.value = value;
         cached.updatedAt = new Date();
         record = cached;

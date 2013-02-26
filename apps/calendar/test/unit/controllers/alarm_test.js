@@ -11,8 +11,6 @@ suiteGroup('Controllers.Alarm', function() {
   var eventStore;
   var settingStore;
 
-  var realSyncSettings;
-
   setup(function(done) {
     this.timeout(10000);
     app = testSupport.calendar.app();
@@ -25,15 +23,6 @@ suiteGroup('Controllers.Alarm', function() {
     settingStore = app.store('Setting');
 
     db.open(function() {
-      // Suppress initial creation of sync alarms
-      realSyncSettings = [settingStore.syncFrequency, settingStore.syncAlarm];
-      settingStore.set('syncFrequency', null);
-      settingStore.set('syncAlarm', {
-        alarmId: null,
-        start: null,
-        end: null
-      });
-
       done();
     });
   });
@@ -46,11 +35,20 @@ suiteGroup('Controllers.Alarm', function() {
     );
   });
 
-  teardown(function() {
-    settingStore.set('syncFrequency', realSyncSettings[0]);
-    settingStore.set('syncAlarm', realSyncSettings[1]);
+  teardown(function(done) {
+    subject.unobserve();
 
-    db.close();
+    var defaults = settingStore.defaults;
+    var trans = db.transaction('settings', 'readwrite');
+
+    settingStore.remove('syncFrequency', trans);
+    settingStore.remove('syncAlarm', trans);
+
+    trans.oncomplete = function() {
+      db.close();
+      done();
+    };
+
   });
 
   suite('#observe', function() {
@@ -115,6 +113,11 @@ suiteGroup('Controllers.Alarm', function() {
       };
 
       subject.observe();
+    });
+
+    teardown(function() {
+      // clear request between runs...
+      mockRequest = {};
     });
 
     test('alarm messages', function(done) {
@@ -322,9 +325,30 @@ suiteGroup('Controllers.Alarm', function() {
           subject.handleAlarm(alarm, trans);
         });
       });
+    });
+
+    suite('sync alarms', function() {
+      function sendId(id) {
+        mockRequest.onsuccess({
+          target: {
+            result: id
+          }
+        });
+      }
+
+      test('initial alarms', function(done) {
+        sendId(1);
+
+        settingStore.getValue('syncAlarm', function(err, value) {
+          done(function() {
+            console.log(value);
+          });
+        });
+      });
 
     });
 
+    return;
     test('sync alarm', function() {
       function sendId(id) {
         mockRequest.onsuccess({
