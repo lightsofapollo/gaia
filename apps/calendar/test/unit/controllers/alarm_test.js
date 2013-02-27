@@ -52,21 +52,27 @@ suiteGroup('Controllers.Alarm', function() {
   });
 
   suite('#observe', function() {
+    function sendId(id) {
+      mockRequest.onsuccess({
+        target: {
+          result: id
+        }
+      });
+    }
+
     var worksQueue;
 
     var realApi;
-    var calledWith;
+    var handleMessagesCalled;
     var realAlarmApi;
     var currentAlarmTime = null;
     var removed = null;
     var mockRequest = {};
-    var realLockApi;
-    var wakeLock;
 
     suiteSetup(function() {
       realApi = navigator.mozSetMessageHandler;
       navigator.mozSetMessageHandler = function() {
-        calledWith = arguments;
+        handleMessagesCalled = arguments;
       };
 
       realAlarmApi = navigator.mozAlarms;
@@ -76,10 +82,11 @@ suiteGroup('Controllers.Alarm', function() {
           if (data && data.type === 'sync')
             currentAlarmTime = endTime;
 
-          if (mockAlarms.onadd)
+          if (mockAlarms.onadd) {
             Calendar.nextTick(function() {
               mockAlarms.onadd();
             });
+          }
 
           return mockRequest;
         },
@@ -89,47 +96,33 @@ suiteGroup('Controllers.Alarm', function() {
           currentAlarmTime = null;
         }
       };
-
-      wakeLock = {
-        done: null,
-
-        unlock: function() {
-          wakeLock.done();
-        }
-      };
-      realLockApi = navigator.requestWakeLock;
-      navigator.requestWakeLock = function(type) {
-        if (type === 'wifi')
-          return wakeLock;
-        else
-          return realLockApi(type);
-      };
     });
 
     suiteTeardown(function() {
       navigator.mozSetMessageHandler = realApi;
       navigator.mozAlarms = realAlarmApi;
-      navigator.requestWakeLock = realLockApi;
     });
 
     setup(function() {
-      calledWith = false;
+      handleMessagesCalled = false;
       worksQueue = false;
       alarmStore.workQueue = function() {
         worksQueue = true;
       };
-
-      subject.observe();
     });
 
     teardown(function() {
+      // cleanup previous test runs
+      navigator.mozAlarms.onadd = null;
+
       // clear request between runs...
       mockRequest = {};
     });
 
     test('alarm messages', function(done) {
-      assert.ok(calledWith);
-      assert.equal(calledWith[0], 'alarm');
+      subject.observe();
+      assert.ok(handleMessagesCalled);
+      assert.equal(handleMessagesCalled[0], 'alarm');
 
       subject.handleAlarmMessage = function(msg) {
         done(function() {
@@ -137,7 +130,7 @@ suiteGroup('Controllers.Alarm', function() {
         });
       };
 
-      calledWith[1]('foo');
+      handleMessagesCalled[1]('foo');
     });
 
     suite('#_sendAlarmNotification', function() {
@@ -229,6 +222,7 @@ suiteGroup('Controllers.Alarm', function() {
       }
 
       setup(function() {
+        subject.observe();
         transPending = 0;
         sent.length = 0;
         event = null;
@@ -334,15 +328,7 @@ suiteGroup('Controllers.Alarm', function() {
       });
     });
 
-    suite('sync alarms', function() {
-      function sendId(id) {
-        mockRequest.onsuccess({
-          target: {
-            result: id
-          }
-        });
-      }
-
+    suite('(perodic) sync alarms', function() {
       function willChangeAlarmId(newId, done) {
         navigator.mozAlarms.onadd = function() {
           settingStore.getValue('syncAlarm', function(err, value) {
@@ -369,6 +355,8 @@ suiteGroup('Controllers.Alarm', function() {
           sendId(initialAlarmId);
           done();
         };
+
+        subject.observe();
       });
 
       test('initial alarms', function(done) {
@@ -410,72 +398,142 @@ suiteGroup('Controllers.Alarm', function() {
         });
       });
 
-      test('setting sync to +15 minutes', function(done) {
-        var newAlarmId = 2;
-        var newFreq = initialFreq + 15;
+      function testChangesToTime(freqDiff) {
 
-        // async assertion that alarm id will change
-        willChangeAlarmId(2, done);
-        settingStore.set('syncFrequency', newFreq);
+        test('changing syncFrequency by: ' + freqDiff, function(done) {
+          var newAlarmId = 2;
+          var newFreq = initialFreq + freqDiff;
 
-        // verify new alarm was set with right date
-        var difference = Math.round(
-          (currentAlarmTime - new Date()) / 1000 / 60
-        );
+          // async assertion that alarm id will change
+          willChangeAlarmId(newAlarmId, done);
+          settingStore.set('syncFrequency', newFreq);
 
-        assert.equal(difference, newFreq);
-        sendId(2);
+          // verify new alarm was set with right date
+          var difference = Math.round(
+            (currentAlarmTime - new Date()) / 1000 / 60
+          );
 
-        assert.equal(
-          removed, initialAlarmId,
-          'removes previous alarm on change'
-        );
-      });
-    });
+          assert.equal(difference, newFreq);
+          sendId(2);
 
-    return;
-    test('sync alarm', function() {
-      function sendId(id) {
-        mockRequest.onsuccess({
-          target: {
-            result: id
-          }
+          assert.equal(
+            removed, initialAlarmId,
+            'removes previous alarm on change'
+          );
         });
       }
 
-      currentAlarmTime = null;
-      removed = null;
+      // add time
+      testChangesToTime(10);
 
-      // Test setting sync to 15 minutes
-      settingStore.set('syncFrequency', 15);
-      var difference = Math.round((currentAlarmTime - new Date()) / 1000 / 60);
-      assert.equal(difference, 15);
-      sendId(2);
-      assert.equal(removed, 1);
-      var previousTime = currentAlarmTime - 15 * 60 * 1000; // Previous start time
-
-      // Test setting sync to 30 minutes and confirm it uses the previous start time
-      settingStore.set('syncFrequency', 30);
-      var nextTime = previousTime + 30 * 60 * 1000;
-      assert.equal(nextTime, currentAlarmTime.getTime());
-      sendId(3);
-      assert.equal(removed, 2);
-
-      // Test setting sync off
-      currentAlarmTime = null;
-      settingStore.set('syncFrequency', null);
-      assert.equal(currentAlarmTime, null);
-      assert.equal(removed, 3);
+      // reduce time
+      testChangesToTime(-5);
     });
 
-    test('sync alarm triggering', function(done) {
-      wakeLock.done = done;
+    suite('#handleAlarmMessage', function() {
 
-      subject._handleSyncMessage();
-      // This test will succeed when the wifi lock is released
+      suite('type: sync', function() {
+        var locks = [];
+
+        var Lock = {
+          locked: false,
+
+          unlock: function() {
+            this.locked = false;
+          }
+        };
+
+        var realLockApi;
+
+        suiteSetup(function() {
+          realLockApi = navigator.requestWakeLock;
+
+          navigator.requestWakeLock = function mockRequestLock(type) {
+            if (type === 'wifi') {
+              var lock = Object.create(Lock);
+              locks.push(lock);
+
+              lock.locked = true;
+              return lock;
+            }
+          };
+        });
+
+        suiteTeardown(function() {
+          navigator.requestWakeLock = realLockApi;
+        });
+
+        setup(function(done) {
+          locks.length = 0;
+
+          // stage first alarm to simulate real conditions.
+          navigator.mozAlarms.onadd = function() {
+            // save it
+            sendId(1);
+            done();
+          };
+
+          // setup observer
+          subject.observe();
+        });
+
+        test('reschedules sync', function(done) {
+          // mock out all
+          app.syncController.all = function(cb) {
+            Calendar.nextTick(cb);
+          };
+
+          navigator.mozAlarms.onadd = function() {
+            assert.equal(removed, 1, 'removes initial alarm');
+            sendId(55);
+
+            settingStore.getValue('syncAlarm', function(err, value) {
+              done(function() {
+                assert.equal(value.alarmId, 55, 'creates new alarm');
+              });
+            });
+          };
+
+          subject.handleAlarmMessage({
+            data: { type: 'sync' }
+          });
+        });
+
+        test('multiple syncs', function(done) {
+          var pending = 4;
+
+          function onComplete() {
+            assert.length(locks, 4, 'has correct number of locks');
+
+            var freedAll = locks.every(function(lock) {
+              return lock.locked === false;
+            });
+
+            assert.ok(freedAll, 'all locks are freed.');
+          }
+
+          app.syncController.all = function(callback) {
+            var lock = locks[locks.length - 1];
+            assert.ok(lock, 'has lock');
+            assert.isTrue(lock.locked, 'is locked');
+
+            Calendar.nextTick(function() {
+              callback();
+              assert.isFalse(lock.locked, 'unlocks itself');
+
+              if (!(--pending))
+                done(onComplete);
+            });
+          };
+
+          var i = 0;
+          while (i++ < pending)
+            subject.handleAlarmMessage({ data: { type: 'sync' } });
+
+        });
+
+      });
     });
+
   });
-
-
-
 });

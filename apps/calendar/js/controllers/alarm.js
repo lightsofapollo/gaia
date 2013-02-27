@@ -15,14 +15,6 @@ Calendar.ns('Controllers').Alarm = (function() {
       var settings = this.app.store('Setting');
       var self = this;
 
-      this._wifiLock = null;
-      this.app.syncController.on('syncComplete', function() {
-        if (self._wifiLock !== null) {
-          self._wifiLock.unlock();
-          self._wifiLock = null;
-        }
-      });
-
       function getNextSync(err, result) {
         if (err) {
           console.error('Calendar failed to get _nextPeriodicSync!!!');
@@ -93,7 +85,9 @@ Calendar.ns('Controllers').Alarm = (function() {
       var distance = Calendar.App.dateFormat.fromNow(begins);
 
       // TODO: verify this is all we need to handle.
-      var type = (begins > now) ? 'alarm-starting-notice' : 'alarm-started-notice';
+      var type = (begins > now) ?
+        'alarm-starting-notice' :
+        'alarm-started-notice';
 
       var title = navigator.mozL10n.get(type, {
         title: event.title,
@@ -232,6 +226,7 @@ Calendar.ns('Controllers').Alarm = (function() {
         self._nextPeriodicSync.end = end;
         settings.set('syncAlarm', self._nextPeriodicSync);
       };
+
       request.onerror = function(e) {
         debug('Error setting alarm:', e.target.error.name);
       };
@@ -241,8 +236,14 @@ Calendar.ns('Controllers').Alarm = (function() {
      * Handles an sync alarm firing
      */
     _handleSyncMessage: function() {
-      this._wifiLock = navigator.requestWakeLock('wifi');
-      this.app.syncController.all();
+      var self = this;
+      var lock = navigator.requestWakeLock('wifi');
+
+      this.app.syncController.all(function() {
+        lock.unlock();
+        lock = null;
+      });
+
       this._resetSyncAlarm(true);
     }
 
