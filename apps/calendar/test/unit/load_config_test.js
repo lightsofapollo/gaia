@@ -68,6 +68,9 @@ suite('load_config', function() {
     };
 
     subject = NotAmd(config);
+
+    // ensure file has not been loaded...
+    delete Calendar.FromLoaderTest;
   });
 
   test('load js', function(done) {
@@ -82,6 +85,12 @@ suite('load_config', function() {
         var scripts = document.querySelectorAll(
           'script[src*="from_loader_test.js"]'
         );
+
+        var allScripts = Array.slice(document.querySelectorAll('script'));
+
+        allScripts.forEach(function(script) {
+          console.log(script.outerHTML);
+        });
 
         if (scripts.length > 1) {
           console.log(scripts[0].outerHTML);
