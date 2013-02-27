@@ -142,7 +142,9 @@ Calendar.LoadConfig = (function() {
         js: [
           'view',
           'views/settings'
-        ]
+        ],
+
+        style: ['settings']
       },
 
       'Views.MonthsDay': {
@@ -181,7 +183,9 @@ Calendar.LoadConfig = (function() {
         js: [
           'utils/input_parser',
           'views/modify_event'
-        ]
+        ],
+
+        style: ['modify_event_view']
       },
 
       'Views.ModifyAccount': {
@@ -191,7 +195,9 @@ Calendar.LoadConfig = (function() {
           'utils/account_creation',
           'models/account',
           'views/modify_account'
-        ]
+        ],
+
+        style: ['modify_account_view']
       },
 
       'Views.Errors': {
@@ -265,7 +271,9 @@ Calendar.LoadConfig = (function() {
         js: [
           'template',
           'templates/week'
-        ]
+        ],
+
+        style: ['week_view']
       },
 
       'Templates.Month': {

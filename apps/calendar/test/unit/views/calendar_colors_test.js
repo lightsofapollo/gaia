@@ -1,6 +1,3 @@
-//requireLib('models/calendar.js');
-//requireLib('views/calendar_colors.js');
-
 suiteGroup('Views.CalendarColors', function() {
 
   var subject;
