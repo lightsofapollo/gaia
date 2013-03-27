@@ -1,3 +1,5 @@
+mocha.setup({ignoreLeaks: true});
+
 (function(window) {
   var oldRequire = window.require;
 
