@@ -10,6 +10,11 @@
 
 var requirejs, require, define;
 (function (global, undef) {
+
+  function debug(msg) {
+    dump('!!! AMEDA JS -**-- :' + msg + '\n');
+  }
+
     var prim, topReq, dataMain,
         bootstrapConfig = requirejs || require,
         hasOwn = Object.prototype.hasOwnProperty,
@@ -104,9 +109,9 @@ var requirejs, require, define;
         var waitingId,
             waiting = [];
 
-        function check(p, v) {
+        function check(p) {
             if (hasProp(p, 'e') || hasProp(p, 'v')) {
-                throw new Error('already resolved, discarding: ' + v);
+                throw new Error('nope');
             }
             return true;
         }
@@ -174,14 +179,14 @@ var requirejs, require, define;
                 },
 
                 resolve: function (v) {
-                    if (check(p, v)) {
+                    if (check(p)) {
                         p.v = v;
                         notify(ok, v);
                     }
                     return p;
                 },
                 reject: function (e) {
-                    if (check(p, e)) {
+                    if (check(p)) {
                         p.e = e;
                         notify(fail, e);
                     }
@@ -480,6 +485,7 @@ var requirejs, require, define;
 
         function makeRequire(relName, topLevel) {
             var req = function (deps, callback, errback, alt) {
+                debug('BEGIN REQUIRE!!!');
                 var name, cfg;
 
                 if (topLevel) {
@@ -521,14 +527,18 @@ var requirejs, require, define;
                 //Support require(['a'])
                 callback = callback || function () {};
 
+                debug('BEGIN REQUIRE!!!');
                 //Simulate async callback;
                 prim.nextTick(function () {
+                  debug('NEXT TICKIFY!!!');
                     //Grab any modules that were defined after a
                     //require call.
                     takeQueue();
+                    debug('MAIN');
                     main(undef, deps || [], callback, errback, relName);
                 });
 
+                    debug('REQ');
                 return req;
             };
 
@@ -1050,7 +1060,7 @@ var requirejs, require, define;
                 });
                 err = new Error('Timeout for modules: ' + noLoads);
                 err.requireModules = noLoads;
-                throw err;
+                req.onError(err);
             } else if (loadCount || reqDefs.length) {
                 //Something is still waiting to load. Wait for it, but only
                 //if a timeout is not already in effect.
@@ -1071,6 +1081,7 @@ var requirejs, require, define;
         }
 
         main = function (name, deps, factory, errback, relName) {
+          debug('--- I BE INSIDE TEH MAIN');
             //Only allow main calling once per module.
             if (name && hasProp(calledDefine, name)) {
                 return;

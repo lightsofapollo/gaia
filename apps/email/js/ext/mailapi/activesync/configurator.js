@@ -1380,15 +1380,14 @@ ActiveSyncFolderConn.prototype = {
       }];
     }
     else if (bodyType === asbEnum.Type.HTML) {
-      var htmlNode = $htmlchew.sanitizeAndNormalizeHtml(bodyText);
-      header.snippet = $htmlchew.generateSnippet(htmlNode,
+      var html = $htmlchew.sanitizeAndNormalizeHtml(bodyText);
+      header.snippet = $htmlchew.generateSnippet(html,
                                                  DESIRED_SNIPPET_LENGTH);
-      var content = htmlNode.innerHTML;
-      var len = content.length;
+      var len = html.length;
 
       body.bodyReps = [{
         type: 'html',
-        content: content,
+        content: html,
         sizeEstimate: len,
         amountDownloaded: len,
         isDownloaded: true
@@ -2260,9 +2259,16 @@ ActiveSyncJobDriver.prototype = {
 var LOGFAB = exports.LOGFAB = $log.register($module, {
   ActiveSyncJobDriver: {
     type: $log.DAEMON,
+    events: {
+      saveFailure: { storage: false, mimeType: false, error: false},
+    },
+    TEST_ONLY_events: {
+      saveFailure: { filename: false },
+    },
     errors: {
       callbackErr: { ex: $log.EXCEPTION },
     },
+
   },
 });
 
@@ -2512,8 +2518,10 @@ ActiveSyncAccount.prototype = {
     this.saveAccountState(null, null, 'checkpointSync');
   },
 
-  shutdown: function asa_shutdown() {
+  shutdown: function asa_shutdown(callback) {
     this._LOG.__die();
+    if (callback)
+      callback();
   },
 
   accountDeleted: function asa_accountDeleted() {
