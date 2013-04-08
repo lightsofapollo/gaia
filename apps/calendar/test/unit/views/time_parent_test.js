@@ -352,6 +352,9 @@ suiteGroup('Views.TimeParent', function() {
     });
   });
 
+  suite('#onswipe', function() {
+  });
+
   suite('#onactive', function() {
 
     test('without scale', function() {

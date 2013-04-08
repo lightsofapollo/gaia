@@ -1,6 +1,7 @@
 Calendar.ns('Views').TimeParent = (function() {
 
   var XSWIPE_OFFSET = window.innerWidth / 10;
+  var CURRENT = 'current';
 
   /**
    * Parent view for busytime-based views
@@ -39,24 +40,119 @@ Calendar.ns('Views').TimeParent = (function() {
 
       this.gd = new GestureDetector(this.element);
       this.gd.startDetecting();
+
+      var events = [
+        'mousedown', 'mouseup', 'mousemove',
+        'touchstart', 'touchend', 'touchmove'
+      ];
+
+      events.forEach(function(event) {
+        this.element.addEventListener(event, function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+        });
+      }, this);
+
     },
 
     _onswipe: function(data) {
       if (
-          Math.abs(data.dy) > (Math.abs(data.dx) - XSWIPE_OFFSET)
+          !this._swipePending &&
+          Math.abs(data.dy) > (Math.abs(data.dx) - XSWIPE_OFFSET) &&
+          (data.direction === 'left' || data.direction === 'right')
       ) {
         return;
       }
 
-      var dir = data.direction;
+
+
       var controller = this.app.timeController;
 
-      // TODO: RTL
-      if (dir === 'left') {
-        controller.move(this._nextTime(this.date));
-      } else {
-        controller.move(this._previousTime(this.date));
-      }
+      /*
+        animations steps:
+
+          if left
+            add class "next-frame"
+          if right
+            add class "previous-frame"
+
+          add animation class to body
+
+          wait for _both_ animations to complete then remove
+          animations class.
+
+          (current should always be set to 0%)
+
+         // set current time
+
+      */
+     var type = (data.direction === 'left') ? 'next' : 'previous';
+     var containerClassName = 'transition-frames-' + data.direction;
+     this._swipePending = true;
+
+     console.log(containerClassName, '<--- KLASS NAME');
+
+     var fromFrame = this.currentFrame;
+     var toFrame = this.frames.adjacent(
+       this.currentFrame.id,
+       (type === 'next') ? 1 : -1
+     );
+
+
+     var pending = 2;
+     function next(e) {
+       console.log(e.target.classNames, pending, '<-- HIT!');
+       if (--pending === 0) {
+         realMove();
+       }
+     }
+
+     toFrame.element.addEventListener('transitionend', next);
+     fromFrame.element.addEventListener('transitionend', next);
+
+     toFrame.element.classList.add('next-frame');
+     fromFrame.element.classList.add('previous-frame');
+
+     Calendar.nextTick(function() {
+       this.frameContainer.classList.add(containerClassName);
+     }.bind(this));
+
+     toFrame.activate();
+     var realMove = function() {
+       this._swipePending = false;
+
+       // real move
+       //controller.move(this['_' + type + 'Time'](this.date));
+
+       fromFrame.element.classList.remove('previous-frame');
+       toFrame.element.classList.remove('next-frame');
+       // remove classes and listeners
+       toFrame.element.removeEventListener('transitionend', next);
+       fromFrame.element.removeEventListener('transitionend', next);
+
+       this.frameContainer.classList.remove(containerClassName);
+      }.bind(this);
+    },
+
+    /**
+     * Find a frame near the current frame.
+     *
+     *    // next frame
+     *    parent.adjacentFrame(1);
+     *
+     *    // previous frame
+     *    parent.adjacentFrame(-1);
+     *
+     *
+     * @param {Numeric} relativePosition distance from current frame.
+     * @return {Object|Null} frame or null.
+     */
+    adjacentFrame: function(relativePosition) {
+      var idx = this.frames.indexOf(this.currentFrame.id);
+
+      idx += relativePosition;
+
+      return this.frames.items[idx] || null;
     },
 
     handleEvent: function(e) {

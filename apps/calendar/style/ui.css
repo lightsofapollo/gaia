@@ -246,6 +246,7 @@ body[data-path^="/month/"] section.month.previous {
 }
 
 section.month {
+  transition: transform 0.75s linear;
   z-index: 200;
   top: 4.9rem;
   height: calc(65% - 5rem);
@@ -258,6 +259,24 @@ section.month {
 }
 
 /* sub: day rows */
+
+.transition-frames-left section.month.next-frame,
+.transition-frames-right section.month.next-frame {
+  transform: translateX(0%);
+}
+
+.transition-frames-left section.month.previous-frame,
+.transition-frames-right section.month.previous-frame {
+  transform: translateX(-100%);
+}
+
+section.month.previous-frame {
+  transform: translateX(0%);
+}
+
+section.month.next-frame {
+  transform: translateX(100%);
+}
 
 section.month.active {
   display: block;
@@ -568,3 +587,4 @@ section[role="status"].active {
 #settings {
   visibility: hidden;
 }
+

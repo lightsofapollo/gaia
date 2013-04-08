@@ -30,19 +30,26 @@ Calendar.ns('Utils').OrderedMap = (function() {
       );
     },
 
-    previous: function(key) {
+    /**
+     * Finds adjacent value to a given key.
+     *
+     *
+     *    map.adjacent(key, 1); // next
+     *    map.adjacent(key, -1); // previous
+     *
+     *
+     * @param {Numeric|String} key of value.
+     * @param {Numeric} offset position before or after value to find.
+     * @return {Object|Null} found value or null.
+     */
+    adjacent: function(key, offset) {
       var idx = this.indexOf(key);
-      if (idx !== null && this.items[idx - 1]) {
-        return this.items[idx - 1][1];
-      }
-      return null;
-    },
+      var value = this.items[idx + offset];
 
-    next: function(key) {
-      var idx = this.indexOf(key);
-      if (idx !== null && this.items[idx + 1]) {
-        return this.items[idx + 1][1];
+      if (idx !== null && value) {
+        return value[1];
       }
+
       return null;
     },
 

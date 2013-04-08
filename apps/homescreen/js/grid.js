@@ -169,8 +169,11 @@ var GridManager = (function() {
   function handleEvent(evt) {
     switch (evt.type) {
       case touchstart:
-        if (currentPage || numberOfSpecialPages === 1)
+        if (currentPage || numberOfSpecialPages === 1) {
           evt.stopPropagation();
+          evt.preventDefault();
+        }
+
         touchStartTimestamp = evt.timeStamp;
         startEvent = isTouch ? evt.touches[0] : evt;
         deltaX = 0;
@@ -185,6 +188,8 @@ var GridManager = (function() {
         if (evt.preventPanning === true) {
           return;
         }
+
+        evt.preventDefault();
 
         // Start panning immediately but only disable
         // the tap when we've moved far enough.
@@ -269,6 +274,7 @@ var GridManager = (function() {
         // Generate a function accordingly to the current page position.
         if (currentPage > nextLandingPage || Homescreen.isInEditMode()) {
           var pan = function(e) {
+            e.preventDefault();
             currentX = getX(e);
             deltaX = panningResolver.getDeltaX(e);
 
@@ -306,6 +312,7 @@ var GridManager = (function() {
           }
 
           var pan = function(e) {
+            e.preventDefault();
             currentX = getX(e);
             deltaX = panningResolver.getDeltaX(e);
 

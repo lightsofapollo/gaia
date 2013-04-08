@@ -55,14 +55,20 @@ suite('ordered_map', function() {
     assert.equal(subject.indexOf(77), null);
   });
 
-  test('#next', function() {
-    assert.equal(subject.next(1), 'foo');
-    assert.equal(subject.next(8), null);
-  });
+  suite('#offset', function() {
 
-  test('#previous', function() {
-    assert.equal(subject.previous(8), 'baz');
-    assert.equal(subject.previous(1), null);
+    test('0', function() {
+      assert.equal(subject.adjacent(8, 0), 'foo');
+    });
+
+    test('+1', function() {
+      assert.equal(subject.adjacent(1, 1), 'foo');
+    });
+
+    test('-1', function() {
+      assert.equal(subject.adjacent(8, -1), 'baz');
+    });
+
   });
 
   suite('#set', function() {
