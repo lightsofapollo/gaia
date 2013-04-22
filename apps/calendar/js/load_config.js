@@ -176,6 +176,7 @@ Calendar.LoadConfig = (function() {
         js: [
           'templates/alarm',
           'utils/input_parser',
+          'utils/uri',
           'views/view_event'
         ],
 

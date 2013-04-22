@@ -36,7 +36,8 @@ Calendar.ns('Views').ViewEvent = (function() {
       // Disable the button on primary event to avoid race conditions
       this.primaryButton.setAttribute('aria-disabled', 'true');
 
-      this.app.go('/event/edit/' + this.busytime._id + '/');
+      this.app.go('/event/edit/' + this.busytime._id +
+          '/?returnTop=' + this.returnTop());
     },
 
     /**

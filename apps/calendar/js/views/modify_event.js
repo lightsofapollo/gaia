@@ -329,10 +329,12 @@ Calendar.ns('Views').ModifyEvent = (function() {
           // of the dom elements so selectedDay must come after.
           self.app.timeController.selectedDay = moveDate;
 
-          // If we are updating an event, return to the event view
-          if (method == 'updateEvent') {
-            var busytimeId = self.store.busytimeIdFor(self.event);
-            self._returnTo = '/event/show/' + busytimeId + '/';
+          if (method === 'updateEvent') {
+            // Try to find the top view in the urlparams
+            var returnTop = Calendar.Utils.URI.getParameterValue('returnTop');
+            if (returnTop) {
+              self._returnTo = returnTop;
+            }
           }
 
           self.app.go(self.returnTo());

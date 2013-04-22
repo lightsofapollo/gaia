@@ -47,6 +47,34 @@ Calendar.ns('Utils').URI = (function() {
     },
 
     /**
+     * Get the value for some urlparam by its string key.
+     * @param {string} paramName The name of the key to look for.
+     * @return {?string} Result will be the value as a string if the
+     *     key exists, else null.
+     */
+    getParameterValue: function(paramName) {
+      var search = window.location.search;
+      if (search.length === 0) {
+        return null;
+      }
+
+      var query = window.location.search.substring(1);
+      var queryData = query.split('&');
+      for (var i = 0; i < queryData.length; i++) {
+        var pair = queryData[i].split('=');
+        if (pair.length !== 2) {
+          continue;
+        }
+
+        if (decodeURIComponent(pair[0]) === paramName) {
+          return decodeURIComponent(pair[1]);
+        }
+      }
+
+      return null;
+    },
+
+    /**
      * Decide whether or not this string represents an integer.
      * @param {string} str some string.
      * @param {boolean} whether or not str represents an integer.
