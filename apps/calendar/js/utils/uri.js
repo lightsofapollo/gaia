@@ -1,6 +1,9 @@
 Calendar.ns('Utils').URI = (function() {
 
   var URI = {
+    window: window,
+
+
     /**
      * Get the port of the url.
      * @param {string} url full url.
@@ -53,12 +56,12 @@ Calendar.ns('Utils').URI = (function() {
      *     key exists, else null.
      */
     getParameterValue: function(paramName) {
-      var search = window.location.search;
+      var search = this.window.location.search;
       if (search.length === 0) {
         return null;
       }
 
-      var query = window.location.search.substring(1);
+      var query = this.window.location.search.substring(1);
       var queryData = query.split('&');
       for (var i = 0; i < queryData.length; i++) {
         var pair = queryData[i].split('=');

@@ -57,50 +57,50 @@ suite('uri', function() {
 
   // TODO(gareth): Turn this on once we have some way to mock out
   // window.location.search
-  // suite('#getParameterValue', function() {
-  //   var sinon = window.sinon;
-  //   var stub;
+  suite('#getParameterValue', function() {
+    var returnTo = '';
+    var mockedSearch;
 
-  //   teardown(function() {
-  //     stub.restore();
-  //   });
+    setup(function() {
+      mockedSearch = '';
+      Calendar.Utils.URI.window = {
+        location: {
+          get search() {
+            return mockedSearch;
+          }
+        }
+      };
+    });
 
-  //   test('no search', function() {
-  //     stub = sinon.stub(window.location, 'search', function() {
-  //       return '';
-  //     });
+    teardown(function() {
+      Calendar.Utils.URI.window = window;
+    });
 
-  //     var paramValue = Calendar.Utils.URI.getParameterValue('returnTop');
-  //     assert.deepEqual(null, paramValue);
-  //   });
+    test('no search', function() {
+      mockedSearch = '';
+      var paramValue = Calendar.Utils.URI.getParameterValue('returnTop');
+      assert.deepEqual(null, paramValue);
+    });
 
-  //   test('param not found', function() {
-  //     stub = sinon.stub(window.location, 'search', function() {
-  //       return '?linus=adog&harvey=aparrot';
-  //     });
+    test('param not found', function() {
+      mockedSearch = '?linus=adog&harvey=aparrot';
+      var paramValue = Calendar.Utils.URI.getParameterValue('returnTop');
+      assert.deepEqual(null, paramValue);
+    });
 
-  //     var paramValue = Calendar.Utils.URI.getParameterValue('returnTop');
-  //     assert.deepEqual(null, paramValue);
-  //   });
+    test('param found', function() {
+      var returnTop = '/month/';
+      mockedSearch = '?alison=ahuman&returnTop=' + returnTop;
+      var paramValue = Calendar.Utils.URI.getParameterValue('returnTop');
+      assert.deepEqual(returnTop, paramValue);
+    });
 
-  //   test('param found', function() {
-  //     var returnTop = '/month/';
-  //     stub = sinon.stub(window.location, 'search', function() {
-  //       return '?alison=ahuman&returnTop=' + returnTop;
-  //     });
+    test('param found and urlencoded', function() {
+      var returnTop = 'trollol lolol lol / o_O';
+      mockedSearch = '?returnTop=' + returnTop;
 
-  //     var paramValue = Calendar.Utils.URI.getParameterValue('returnTop');
-  //     assert.deepEqual(returnTop, paramValue);
-  //   });
-
-  //   test('param found and urlencoded', function() {
-  //     var returnTop = 'trollol lolol lol / o_O';
-  //     stub = sinon.stub(window.location, 'search', function() {
-  //       return '?returnTop=' + returnTop;
-  //     });
-
-  //     var paramValue = Calendar.Utils.URI.getParameterValue('returnTop');
-  //     assert.deepEqual(returnTop, paramValue);
-  //   });
-  // });
+      var paramValue = Calendar.Utils.URI.getParameterValue('returnTop');
+      assert.deepEqual(returnTop, paramValue);
+    });
+  });
 });
