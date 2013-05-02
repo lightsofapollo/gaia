@@ -80,16 +80,26 @@
     url: AgentConfig.websocketUrl
   });
 
+  var SUBAPP = /(.*)?\/test\/unit/;
   worker.use(TestAgent.BrowserWorker.MultiDomainDriver, {
     groupTestsByDomain: function(test) {
 
       var parsed = TestUrlResolver.parse(test);
+      var env = parsed.host;
+
+      var entrypointApp = parsed.url.match(SUBAPP);
+
+      if (entrypointApp) {
+        env += '-' + entrypointApp[1];
+      }
 
       var result = {
         domain: parsed.domain + '/test/unit/_proxy.html',
         test: '/' + parsed.url,
-        env: parsed.host
+        env: env
       };
+
+      console.log(result, '<--- NEW');
 
       return result;
     }
