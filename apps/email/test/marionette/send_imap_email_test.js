@@ -15,10 +15,10 @@ marionette('send email via IMAP', function() {
   test('should send a email', function() {
     const ONE_NEW_EMAIL_NOTIFICATION = '1 New Email';
 
-    app.setupImapEmail();
+    app.manualSetupImapEmail(server);
     app.tapCompose();
 
-    app.typeTo('marionette.js.client@gmail.com');
+    app.typeTo('testy@localhost');
     app.typeSubject('test email');
     app.typeBody('I still have a dream.');
     app.tapSend();

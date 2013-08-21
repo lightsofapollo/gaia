@@ -6,9 +6,6 @@ function Email(_client) {
 module.exports = Email;
 
 Email.EMAIL_ORIGIN = 'app://email.gaiamobile.org';
-Email.USER_NAME = 'GAIA';
-Email.EMAIL_ADDRESS = 'marionette.js.client@gmail.com';
-Email.PASSWORD = 'tpemozilla';
 
 const Selector = {
   notificationBar: '.card-message-list .msg-list-topbar',
@@ -16,6 +13,16 @@ const Selector = {
   setupEmailInput: '.card-setup-account-info .sup-info-email',
   setupPasswordInput: '.card-setup-account-info .sup-info-password',
   nextButton: '.sup-account-header .sup-info-next-btn',
+  manualSetupNameInput: '.sup-manual-form .sup-info-name',
+  manualSetupEmailInput: '.sup-manual-form .sup-info-email',
+  manualSetupPasswordInput: '.sup-manual-form .sup-info-password',
+  manualSetupImapUsernameInput: '.sup-manual-form .sup-manual-imap-username',
+  manualSetupImapHostnameInput: '.sup-manual-form .sup-manual-imap-hostname',
+  manualSetupImapPortInput: '.sup-manual-form .sup-manual-imap-port',
+  manualSetupSmtpUsernameInput: '.sup-manual-form .sup-manual-smtp-username',
+  manualSetupSmtpHostnameInput: '.sup-manual-form .sup-manual-smtp-hostname',
+  manualSetupSmtpPortInput: '.sup-manual-form .sup-manual-smtp-port',
+  manualNextButton: '.sup-account-header .sup-manual-next-btn',
   showMailButton: '.card-setup-done .sup-show-mail-btn',
   manualConfigButton: '.scrollregion-below-header .sup-manual-config-btn',
   composeButton: '.msg-list-header .msg-compose-btn',
@@ -46,26 +53,88 @@ function _waitForTransitionEnd() {
   });
 }
 
-function _typeName(name) {
+function _setupTypeName(name) {
   client.
     findElement(Selector.setupNameInput).
     sendKeys(name);
 }
 
-function _typeEmail(email) {
+function _setupTypeEmail(email) {
   client.
     findElement(Selector.setupEmailInput).
     sendKeys(email);
 }
 
-function _typePassword(password) {
+function _setupTypePassword(password) {
   client.
     findElement(Selector.setupPasswordInput).
     sendKeys(password);
 }
 
-function _tapNext() {
+function _setupTapNext() {
   client.findElement(Selector.nextButton).tap();
+}
+
+function _manualSetupTypeName(name) {
+  client.
+    findElement(Selector.manualSetupNameInput).
+    sendKeys(name);
+}
+
+function _manualSetupTypeEmail(email) {
+  client.
+    findElement(Selector.manualSetupEmailInput).
+    sendKeys(email);
+}
+
+function _manualSetupTypePassword(password) {
+  client.
+    findElement(Selector.manualSetupPasswordInput).
+    sendKeys(password);
+}
+
+function _manualSetupTypeImapUsername(name) {
+  client.
+    findElement(Selector.manualSetupImapUsernameInput).
+    sendKeys(name);
+}
+
+function _manualSetupTypeImapHostname(hostname) {
+  client.
+    findElement(Selector.manualSetupImapHostnameInput).
+    sendKeys(hostname);
+}
+
+function _manualSetupTypeImapPort(port) {
+  var manualSetupImapPortInput =
+      client.findElement(Selector.manualSetupImapPortInput);
+  manualSetupImapPortInput.clear();
+  manualSetupImapPortInput.sendKeys(port);
+}
+
+function _manualSetupTypeSmtpUsername(name) {
+  client.
+    findElement(Selector.manualSetupSmtpUsernameInput).
+    sendKeys(name);
+}
+
+function _manualSetupTypeSmtpHostname(hostname) {
+  client.
+    findElement(Selector.manualSetupSmtpHostnameInput).
+    sendKeys(hostname);
+}
+
+function _manualSetupTypeSmtpPort(port) {
+  var manualSetupSmtpPortInput =
+      client.findElement(Selector.manualSetupSmtpPortInput);
+  manualSetupSmtpPortInput.clear();
+  manualSetupSmtpPortInput.sendKeys(port);
+}
+
+function _manualSetupTapNext() {
+  client.
+    findElement(Selector.manualNextButton).
+    tap();
 }
 
 function _waitForSetupCompleted() {
@@ -82,14 +151,41 @@ Email.prototype = {
   },
 
   setupImapEmail: function() {
+    const USER_NAME = 'GAIA';
+    const EMAIL_ADDRESS = 'marionette.js.client@gmail.com';
+    const PASSWORD = 'tpemozilla';
     // wait for the setup page is loaded
     client.helper.
       waitForElement(Selector.manualConfigButton);
     // setup a IMAP email account
-    _typeName(Email.USER_NAME);
-    _typeEmail(Email.EMAIL_ADDRESS);
-    _typePassword(Email.PASSWORD);
-    _tapNext();
+    _setupTypeName(USER_NAME);
+    _setupTypeEmail(EMAIL_ADDRESS);
+    _setupTypePassword(PASSWORD);
+    _setupTapNext();
+    _waitForSetupCompleted();
+    _tapContinue();
+  },
+
+  manualSetupImapEmail: function(server) {
+    // wait for the setup page is loaded
+    client.helper.
+      waitForElement(Selector.manualConfigButton).
+      tap();
+    // setup a IMAP email account
+    var email = server.imap.username + '@' + server.imap.hostname;
+    _manualSetupTypeName(server.imap.username);
+    _manualSetupTypeEmail(email);
+    _manualSetupTypePassword(server.imap.password);
+
+    _manualSetupTypeImapUsername(server.imap.username);
+    _manualSetupTypeImapHostname(server.imap.hostname);
+    _manualSetupTypeImapPort(server.imap.port);
+
+    _manualSetupTypeSmtpUsername(server.smtp.username);
+    _manualSetupTypeSmtpHostname(server.smtp.hostname);
+    _manualSetupTypeSmtpPort(server.smtp.port);
+
+    _manualSetupTapNext();
     _waitForSetupCompleted();
     _tapContinue();
   },
