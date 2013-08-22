@@ -19,9 +19,11 @@ const Selector = {
   manualSetupImapUsernameInput: '.sup-manual-form .sup-manual-imap-username',
   manualSetupImapHostnameInput: '.sup-manual-form .sup-manual-imap-hostname',
   manualSetupImapPortInput: '.sup-manual-form .sup-manual-imap-port',
+  manualSetupImapSocket: '.sup-manual-form .sup-manual-imap-socket',
   manualSetupSmtpUsernameInput: '.sup-manual-form .sup-manual-smtp-username',
   manualSetupSmtpHostnameInput: '.sup-manual-form .sup-manual-smtp-hostname',
   manualSetupSmtpPortInput: '.sup-manual-form .sup-manual-smtp-port',
+  manualSetupSmtpSocket: '.sup-manual-form .sup-manual-smtp-socket',
   manualNextButton: '.sup-account-header .sup-manual-next-btn',
   showMailButton: '.card-setup-done .sup-show-mail-btn',
   manualConfigButton: '.scrollregion-below-header .sup-manual-config-btn',
@@ -131,6 +133,26 @@ function _manualSetupTypeSmtpPort(port) {
   manualSetupSmtpPortInput.sendKeys(port);
 }
 
+/**
+ * Because we never expose "plain" (zero security for users) as an option we
+ * need to hack the html to expose it (the backend will know about this).
+ */
+function _manualSetupUpdateSocket(type) {
+  var element = client.findElement(Selector[type]);
+
+  // select is a real dom select element
+  element.scriptWith(function(select) {
+    // create the option
+    var option = document.createElement('option');
+    option.value = 'plain';
+    select.add(option, select.options[select.options.length - 1]);
+
+    // update the form to plain so we can use insecure sockets for the
+    // fakeserver.
+    select.value = 'plain';
+  });
+}
+
 function _manualSetupTapNext() {
   client.
     findElement(Selector.manualNextButton).
@@ -180,10 +202,12 @@ Email.prototype = {
     _manualSetupTypeImapUsername(server.imap.username);
     _manualSetupTypeImapHostname(server.imap.hostname);
     _manualSetupTypeImapPort(server.imap.port);
+    _manualSetupUpdateSocket('manualSetupImapSocket');
 
     _manualSetupTypeSmtpUsername(server.smtp.username);
     _manualSetupTypeSmtpHostname(server.smtp.hostname);
     _manualSetupTypeSmtpPort(server.smtp.port);
+    _manualSetupUpdateSocket('manualSetupSmtpSocket');
 
     _manualSetupTapNext();
     _waitForSetupCompleted();
