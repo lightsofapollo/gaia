@@ -1,5 +1,6 @@
 'use strict';
 var Marionette = require('marionette-client');
+var assert = require('assert');
 
 /**
  * mQuery allows you to query and modify the DOM through Marionette,
@@ -45,8 +46,10 @@ var Marionette = require('marionette-client');
  * makes sense.
  */
 var mQuery = function(selectorOrElement, opts) {
-  var client = (opts && opts.client) || mQuery.client;
-  var parent = (opts && opts.parent) || null;
+  assert(opts.client, 'marionette .client must be passed');
+
+  var parent = opts.parent || null;
+  var client = opts.client;
 
   if (!client) {
     throw new Error(
@@ -56,7 +59,7 @@ var mQuery = function(selectorOrElement, opts) {
   var elements;
   var selector;
   if (typeof selectorOrElement === 'string') {
-    elements = (parent || mQuery.client).findElements(selectorOrElement);
+    elements = (parent || client).findElements(selectorOrElement);
     selector = selectorOrElement;
   } else if (Array.isArray(selectorOrElement)) {
     elements = selectorOrElement;
@@ -74,9 +77,15 @@ var mQuery = function(selectorOrElement, opts) {
   });
 };
 
-module.exports = mQuery;
+function mQueryFactory(client) {
+  var opts = { client: client };
 
-mQuery.client = null;
+  return function(selector) {
+    return mQuery(selector, opts);
+  }
+}
+
+module.exports = mQueryFactory;
 
 /**
  * ElementSet acts as a lightweight wrapper over Marionette.Element,

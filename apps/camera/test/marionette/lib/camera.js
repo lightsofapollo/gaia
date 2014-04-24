@@ -1,15 +1,12 @@
 /* global marionette */
 'use strict';
 
-var $ = require('./mquery');
-
 function Camera(client) {
   this.client = client || marionette.client({
     prefs: {
       'focusmanager.testmode': true
     }
   });
-  $.client = client;
 }
 
 Camera.prototype = {
@@ -33,5 +30,3 @@ Camera.prototype = {
 };
 
 module.exports = Camera;
-
-
