@@ -21,11 +21,6 @@ Camera.prototype = {
     this.waitForPreviewReady();
   },
 
-  restart: function() {
-    this.close();
-    this.launch();
-  },
-
   close: function() {
     this.client.apps.close(this.URL);
   },
