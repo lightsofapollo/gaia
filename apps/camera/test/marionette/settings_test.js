@@ -1,6 +1,7 @@
 marionette('Settings', function() {
   'use strict';
 
+  // sadly must come before the client call
   teardown(function() {
     camera.close();
   });
