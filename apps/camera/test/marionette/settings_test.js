@@ -1,7 +1,9 @@
 marionette('Settings', function() {
   'use strict';
 
-  // sadly must come before the client call
+  // sadly must come before the client call because the client call creates
+  // a teardown which close the connection before this gets invoked if called
+  // after it.
   teardown(function() {
     camera.close();
   });
