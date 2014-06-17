@@ -34,11 +34,10 @@
     },
 
     show: function(parent) {
-      dump('\n\n CREATE GAIA-CONFIRM \n\n')
-      var element = document.createElement('div');
-      dump('\n\n BEFORE ATTR \n\n')
+      dump('creating the element\n');
+      var element = document.createElement('gaia-confirm');
+      dump('done\n');
       element.setAttribute('id', 'confirm-message');
-      dump('\n\n BEFORE INNER HTML \n\n')
       element.innerHTML =
           '<gaia-confirm>' +
             '<h1 id="confirmation-message-title"></h1>' +
@@ -49,20 +48,11 @@
             '</gaia-buttons>' +
           '</gaia-confirm>'
 
-
-      dump('\n\n BEFORE APPEND \n\n')
       parent.appendChild(element);
       this.element = element;
       element.addEventListener('confirm', this);
       element.addEventListener('cancel', this);
 
-      dump('\n\n CREATE DONE \n\n')
-
-      setTimeout(function() {
-        console.log('OUTER:', element.outerHTML, '<<<!');
-      }, 2000);
-
-      console.log('OUTER:', element.outerHTML, '<<<!');
       // XXX: Is this a massive hack?
       window.addEventListener('hashchange', this);
 
