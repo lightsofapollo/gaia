@@ -111,6 +111,7 @@
      * Launches an app.
      */
     clickIcon: function(e) {
+      e.preventDefault();
       var container = e.target;
       var action = 'launch';
 

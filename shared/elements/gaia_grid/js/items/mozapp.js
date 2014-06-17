@@ -7,6 +7,8 @@
 
   const IDENTIFIER_SEP = '-';
 
+  var _ = navigator.mozL10n.get;
+
   /**
    * Represents  single app icon on the homepage.
    */
@@ -166,23 +168,47 @@
       });
     },
 
+    cancel: function() {
+      console.log('show cancel~>~>~');
+      var dialog = new GaiaGrid._Dialog({
+        title: _('stop-download-title', { name: this.name }),
+        body: _('stop-download-body'),
+        cancel: {
+          title: _('cancel')
+        },
+        confirm: {
+          title: _('stop-download-action'),
+          type: 'danger',
+          cb: () =>  this.app.cancelDownload()
+        }
+      });
+      dialog.show(this.grid.element);
+    },
+
+    resume: function() {
+      var dialog = new GaiaGrid._Dialog({
+        title: _('resume-download-title'),
+        body: _('resume-download-body', { name: this.name }),
+        cancel: {
+          title: _('cancel')
+        },
+        confirm: {
+          title: _('resume-download-action'),
+          cb: () => this.app.download()
+        }
+      });
+    },
+
     /**
      * Resolves click action.
      */
     launch: function() {
+      return this.cancel();
       var app = this.app;
       if (app.downloading) {
-        window.dispatchEvent(
-          new CustomEvent('gaiagrid-cancel-download-mozapp', {
-            'detail': this
-          })
-        );
+        this.cancel();
       } else if (app.downloadAvailable) {
-        window.dispatchEvent(
-          new CustomEvent('gaiagrid-resume-download-mozapp', {
-            'detail': this
-          })
-        );
+        this.resume();
       } else if (this.entryPoint) {
         app.launch(this.entryPoint);
       } else {

@@ -126,3 +126,7 @@
   width: auto;
   max-width: 100%;
 }
+
+#confirm-message {
+  z-index: 100;
+}

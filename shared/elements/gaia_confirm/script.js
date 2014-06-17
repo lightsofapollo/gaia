@@ -15,26 +15,30 @@ window.GaiaConfirm = (function(win) {
   var baseurl = window.GaiaConfirmBaseurl ||
     '/shared/elements/gaia_confirm/';
 
+  proto.IS_MAGIC_FOO = true;
+
   proto.createdCallback = function() {
     var shadow = this.createShadowRoot();
     this._template = template.content.cloneNode(true);
 
     shadow.appendChild(this._template);
     ComponentUtils.style.call(this, baseurl);
-  };
 
-  proto.attachedCallback = function() {
     var confirm = this.querySelector('gaia-buttons .confirm');
     var cancel = this.querySelector('gaia-buttons .cancel');
 
+    dump(typeof confirm + '<<<<! WHAT CONFIRM FOO\n');
     if (confirm) {
+      dump(typeof confirm + '<<<<! WHAT CONFIRM FOO\n');
       confirm.addEventListener('click', () => {
+        console.log(' <confirm> ');
         this.dispatchEvent(new CustomEvent('confirm'));
       });
     }
 
     if (cancel) {
       confirm.addEventListener('click', () => {
+        console.log(' <cancel> ');
         this.dispatchEvent(new CustomEvent('cancel'));
       });
     }
