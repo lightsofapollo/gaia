@@ -34,19 +34,15 @@
     },
 
     show: function(parent) {
-      dump('creating the element\n');
       var element = document.createElement('gaia-confirm');
-      dump('done\n');
       element.setAttribute('id', 'confirm-message');
       element.innerHTML =
-          '<gaia-confirm>' +
-            '<h1 id="confirmation-message-title"></h1>' +
-            '<p id="confirmation-message-body"></p>' +
-            '<gaia-buttons skin="dark">' +
-              '<button data-type="cancel" class="cancel" id="confirmation-message-cancel" type="button"></button>' +
-              '<button data-type="confirm" class="confirm" id="confirmation-message-ok" type="button"></button>' +
-            '</gaia-buttons>' +
-          '</gaia-confirm>'
+        '<h1 id="confirmation-message-title"></h1>' +
+        '<p id="confirmation-message-body"></p>' +
+        '<gaia-buttons skin="dark">' +
+          '<button data-type="cancel" class="cancel" id="confirmation-message-cancel" type="button"></button>' +
+          '<button data-type="confirm" class="confirm" id="confirmation-message-ok" type="button"></button>' +
+        '</gaia-buttons>';
 
       parent.appendChild(element);
       this.element = element;
