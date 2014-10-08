@@ -15,5 +15,5 @@ params:
 # All task definitions
 definitions:
   gaia_ui_tests:
-    chunks: 80
+    chunks: 74
 
