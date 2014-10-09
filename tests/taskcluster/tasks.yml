@@ -15,5 +15,5 @@ params:
 # All task definitions
 definitions:
   marionette_js_tests:
-    chunks: 74
+    chunks: 170
 
