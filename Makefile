@@ -725,7 +725,7 @@ ifndef APPS
 endif
 
 b2g: node_modules/.bin/mozilla-download
-	curl http://ftp.mozilla.org/pub/mozilla.org/b2g/try-builds/jlal@mozilla.com-3a29b11a383c/try-linux64_gecko/b2g-35.0a1.en-US.linux-x86_64.tar.bz2 | tar xj
+	curl http://ftp.mozilla.org/pub/mozilla.org/b2g/try-builds/jlal@mozilla.com-ef9d5dbad39c/try-linux64_gecko-debug/b2g-35.0a1.en-US.linux-x86_64.tar.bz2 | tar xj
 
 .PHONY: test-integration
 # $(PROFILE_FOLDER) should be `profile-test` when we do `make test-integration`.
