@@ -24,6 +24,7 @@ task:
       REPORTER: 'mocha-tbpl-reporter'
       TEST_MANIFEST: './shared/test/integration/tbpl-manifest.json'
       NSPR_LOG_MODULES: ObserverService:5
+      NODE_MODULES_SRC: https://github.com/lightsofapollo/gaia-node-modules.git
 
     command:
       - entrypoint
