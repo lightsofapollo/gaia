@@ -725,7 +725,7 @@ ifndef APPS
 endif
 
 b2g: node_modules/.bin/mozilla-download
-	curl -L https://queue.taskcluster.net/v1/task/Hqx-Rm4IS1e6G8bK8uh-wQ/runs/0/artifacts/public/build/target.linux-x86_64.tar.bz2 | tar xj
+	curl -L https://queue.taskcluster.net/v1/task/y0XLFLz4Se27Enbl0eY8MA/runs/0/artifacts/public/build/target.linux-x86_64.tar.bz2 | tar xj
 
 .PHONY: test-integration
 # $(PROFILE_FOLDER) should be `profile-test` when we do `make test-integration`.
