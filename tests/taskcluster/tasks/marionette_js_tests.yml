@@ -13,6 +13,11 @@ task:
     # tree)
     - docker-worker:cache:gaia-misc-caches
 
+  scopes:
+    # Source caches contains various sources (including a tarball of gaia source
+    # tree)
+    - docker-worker:cache:gaia-misc-caches
+
   payload:
     cache:
       gaia-misc-caches: /home/tester/caches/
@@ -24,6 +29,9 @@ task:
       REPORTER: 'mocha-tbpl-reporter'
       TEST_MANIFEST: './shared/test/integration/tbpl-manifest.json'
       NSPR_LOG_MODULES: ObserverService:5
+
+    cache:
+      gaia-misc-caches: /home/tester/caches/
 
     command:
       - entrypoint
